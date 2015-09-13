@@ -1,6 +1,8 @@
+from flask import render_template
+
 from bookfinder import app
 
 
 @app.route('/')
-def hello():
-    return 'Hello World!'
+def home():
+    return render_template('index.html')
