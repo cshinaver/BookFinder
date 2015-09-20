@@ -16,8 +16,11 @@ def get_page_for_amazon_book_search(keyword):
         '&rh=n%3A283155%2Ck%3A{search_string}'.format(
             search_string=keyword,
         )
+        # http://www.amazon.com/s/ref=nb_sb_noss_1?url=search-alias
+        # %3Daps&field-keywords=compilers
     )
     return requests.get(search_string).content
+
 
 
 def get_amazon_book_prices_for_keyword(keyword):
@@ -30,4 +33,66 @@ def get_amazon_book_prices_for_keyword(keyword):
             class_='a-size-base a-color-price s-price a-text-bold',
         )
 
-get_amazon_book_prices_for_keyword('compilers')
+def get_page_for_Barnes_book_search(keyword):
+    search_string = (
+        'http://www.barnesandnoble.com/s/{search_string}?fs=0&_requestid=284459'.format(
+            search_string=keyword,
+        )
+        # http://www.amazon.com/s/ref=nb_sb_noss_1?url=search-alias
+        # %3Daps&field-keywords=compilers
+    )
+    return requests.get(search_string).content
+
+def get_Barnes_book_prices_for_keyword(keyword):
+    content = get_page_for_Barnes_book_search(keyword)
+    soup = BeautifulSoup(content)
+    list_items = soup.find_all('li', class_='clearer')
+    for item in list_items:
+        print "Barnes items:"
+        print item.find_all(
+            'span',
+            class_='price',
+        )
+
+
+def get_page_for_Chegg_book_search(keyword):
+    search_string = (
+        'http://www.chegg.com/search/{search_string}/'
+        'federated?trackid=2ad2613f&strackid=520dd664&event=enter_submit#p=1'.format(
+            search_string=keyword,
+
+            # http://www.chegg.com/search/compilers/
+            # federated?trackid=07041517&strackid=4105f5f3&event=enter_submit#p=1
+
+            # http://www.chegg.com/search/data%20structures%20c%2B%2B/
+            # federated?trackid=57ae47c4&strackid=187a3a14&event=enter_submit#p=1
+
+            # http://www.chegg.com/search/database/
+            # federated?trackid=2b4f7cbb&strackid=3596f6c9&event=enter_submit#p=1
+
+
+        )
+    )
+    return requests.get(search_string).content
+
+
+def get_Chegg_book_prices_for_keyword(keyword):
+    #content = get_page_for_Chegg_book_search(keyword)
+    content = requests.get("http://www.chegg.com/search/compilers/federated?trackid=66da70d5&strackid=170c806a&event=enter_submit#p=1").content
+    print content
+    soup = BeautifulSoup(content)
+    import ipdb; ipdb.set_trace()
+    list_items = soup.find_all('li', class_='item-result Chgsec_ls')
+    print 'Chegg items: '
+    for item in list_items:
+        #print 'loop'
+        #print item
+        print item.find_all(
+            'span',
+            class_='price',
+        )
+
+
+#get_amazon_book_prices_for_keyword('compilers')
+#get_Chegg_book_prices_for_keyword('compilers')
+get_Barnes_book_prices_for_keyword('compilers')
