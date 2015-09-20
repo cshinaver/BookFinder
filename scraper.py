@@ -10,6 +10,20 @@ class Book:
         self.book_type = ''
         self.is_rental = False
 
+    def __str__(self):
+        return (
+            "Title: {title}\n"
+            "Price: {price}\n"
+            "rental: {rental}\n"
+            "book type: {book_type}\n"
+            "link: {link}\n".format(
+                title=self.title,
+                price=self.price,
+                rental=self.is_rental,
+                book_type=self.book_type,
+                link=self.link,
+            )
+        )
 
 
 def get_page_for_amazon_book_search(keyword):
