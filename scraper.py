@@ -7,6 +7,9 @@ class Book:
         self.link = ''
         self.price = 0
         self.title = ''
+        self.book_type = ''
+        self.is_rental = False
+
 
 
 def get_page_for_amazon_book_search(keyword):
