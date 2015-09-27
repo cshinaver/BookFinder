@@ -89,6 +89,13 @@ def get_amazon_books_for_keyword(keyword):
         return new_book
 
     def parse_book_list_item_into_books(item):
+        def get_book_type(item):
+            text = item.get_text()
+            if "$" in text:
+                return ''
+            else:
+                return text
+
         # Title and link contained in link element
         link_item = item.find(
             'a',
@@ -104,8 +111,15 @@ def get_amazon_books_for_keyword(keyword):
         )
 
         new_books = []
+        book_type = ''
         for item in price_bulk_items:
+            # First check for book type (Hardcover, softcover, etc)
+            new_book_type = get_book_type(item)
+            if new_book_type:
+                book_type = new_book_type
+                continue
             book = parse_price_bulk_item_into_book(item, new_book_title)
+            book.book_type = book_type
             if book:
                 new_books.append(book)
         return new_books
