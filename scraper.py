@@ -73,7 +73,10 @@ def get_amazon_books_for_keyword(keyword):
             return
 
         new_book.price = price_tag.get_text()
-        new_book.link = item.attrs['href']
+        link = item.attrs['href']
+        # Amazon links have weird &amp; in them which breaks them
+        # Remove anything after the first & arg
+        new_book.link = link[:link.find('&')]
         new_book.title = title
 
         # determine if is rental
