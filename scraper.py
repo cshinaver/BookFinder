@@ -46,14 +46,22 @@ def get_page_for_Barnes_book_search(keyword):
 def get_Barnes_book_prices_for_keyword(keyword):
     content = get_page_for_Barnes_book_search(keyword)
     soup = BeautifulSoup(content)
-    list_items = soup.find_all('li', class_='clearer')
+    list_wrapper_item = soup.find('li', class_='clearer')
+    list_items = list_wrapper_item.find_all('li')
+    #print list_items
     for item in list_items:
-        print "Barnes items:"
-        print item.find_all(
-            'span',
-            class_='price',
-        )
+        product_info = item.find('div', class_='product-info')  #get info of book
+        if not product_info:
+            continue
+        item_title = product_info.find('h2')    #get title
+        print item_title.get_text()
 
+        item_price = product_info.find('span', class_='price')      #get price
+        print item_price.get_text()
+
+        item_type = product_info.find('ul', class_='formats')
+        item_type = item_type.find_all('a')[0]
+        print item_type.get_text()
 
 def get_page_for_Chegg_book_search(keyword):
     search_string = (
