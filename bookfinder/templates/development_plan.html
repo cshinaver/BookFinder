@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+
+    </head>
+    <body class="container">
+        <h1>Development Plan</h1>
+        <h2>Relational Schema</h2>
+        <p>
+            Book(ISBN, Title, Author, Price, Rental, BookType, SellerID)
+            User(FirstName, LastName, Email, UserID, Password)
+	    Sale(SaleID, BookISBN, BuyerID, SellerID, TimeStamp)
+        </p>
+        <h2>Software Platforms and Databases</h2>
+        <h3>Our software stack</h3>
+        <ul>
+            <li>HTML, CSS, and Javascript (ReactJS) for frontend</li>
+            ReactJS is a front end javascript framework that is really useful
+            for rendering dynamic html widgets. It makes html generation much
+            easier by allowing html to be written literally rather than as
+            Javascript objects. This will speed up development time
+            significantly</li>
+            <li>Flask as a backend web framework</li>
+            Flask is a micro web framework written in Python that makes a lot
+            of things a lot easier in terms of backend web serving. It makes it
+            very easy to define URL routes, messaging, requests, and other
+            web things. This will make it eaiser to develop a web app by not
+            recreating the wheel.
+            <li>Python as a backend language of choice</li>
+            By using python as our backend language instead of PHP, we can
+            avoid mixing backend languages with the frontend HTML, thus
+            allowing greater separation of concerns. Also, due to the wealth of
+            debugging tools available for Python, development is significantly
+            easier than it is with PHP.
+            <li>PostgreSQL as database and Heroku as hosting</li>
+            Heroku allows free web hosting for small projects. It also allows
+            one free PostgreSQL database. Since these are provided for us and
+            make the deployment process easier than copying files to the
+            university servers, we chose to use them.
+        </ul>
+        <p>
+        </p>
+        <h2>Data</h2>
+        <p>
+            We will compare student seller prices against those from Google 
+            Books, Barnes & Noble, and Amazon, so the buyer can make an 
+            informed decision about buying.
+            We will be getting most of our price comparison data directly from 
+            the websites of Google Books, Amazon, and Barnes & Noble.
+            Student seller prices will be displayed next to the aforementioned 
+            competitors, allowing for a better informed decision about book 
+            purchases.
+            We have already began with some development of an automatic 
+            webscraper, written in python, to search multiple book websites, 
+            retrieving data from the search pages of those book selling sites.
+        </p>
+        <h2>Labor Division</h2>
+        <ul>
+		<li>Matt: working on pulling book information from Barnes and Nobles and storing data into book data type.</li>
+		<li>Charles: Making book, user, and sale objects for back-end data storage. </li>
+		<li>Josh: pulling google scholars book information and storing data into book data type</li>
+	</ul>
+	<h2>Milestones</h2>
+	<ul>
+		<li>Next Week: have functionality to pull from online book retail websites (Barnes and Nobles, Google Scholars, Amazon) and store data in book data objects.</li>
+		<li>Before Fall Break: Be able to store all data objects and have framework for back end (database) up and running. Should be able to store objects (books, users, sale).</li>
+		<li>Before Thanksgiving: Get back end connected to website and be able to make queries to databases. Keep track of users and sales. </li>
+	</ul>
+
+    </body>
+</html>
