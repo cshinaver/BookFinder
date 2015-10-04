@@ -85,7 +85,7 @@ def get_amazon_books_for_keyword(keyword):
         return book_list_items
 
     def parse_price_bulk_item_into_book(item, title):
-        new_book = Book()
+        new_book = PurchaseOption()
         price_tag = item.find(
             'span',
             class_="a-size-base a-color-price s-price a-text-bold",
@@ -158,12 +158,20 @@ def get_amazon_books_for_keyword(keyword):
 def get_book_object_for_book_title(title):
     def get_book_info_from_book_item(item):
         book = Book()
-        book.title = top_item['volumeInfo']['title']
-        book.subtitle = top_item['volumeInfo']['subtitle']
-        book.author = top_item['volumeInfo']['authors']
-        book.thumbnail_link = top_item['volumeInfo']['imageLinks']['thumbnail']
+        volume_info = top_item['volumeInfo']
+        if not volume_info:
+            return None
+        book.title = volume_info['title']
+        book.subtitle = volume_info.get('subtitle')
+        book.author = volume_info.get('authors')
+        image_links = volume_info.get(
+            'imageLinks'
+        )
+        if image_links:
+            book.thumbnail_link = image_links.get('thumbnail')
+
         book.isbn = (
-            top_item['volumeInfo']['industryIdentifiers'][0]['identifier']
+            volume_info['industryIdentifiers'][0]['identifier']
         )
         return book
 
