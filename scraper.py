@@ -1,6 +1,48 @@
 import requests
 from bs4 import BeautifulSoup
 
+class PurchaseChoice:
+    def __init__(self, *args, **kwargs):
+        self.link = ''
+        self.price = 0
+        self.seller = ''
+        self.book_type = ''
+        self.is_rental = False
+        self.purchaseID = ''
+
+    def __str__(self):
+        return (
+            "Seller: {seller}\n"
+            "Price: {price}\n"
+            "rental: {rental}\n"
+            "book type: {book_type}\n"
+            "link: {link}\n"
+            "PurchaseID: {purchaseID}\n".format(
+                seller=self.seller,
+                price=self.price,
+                rental=self.is_rental,
+                book_type=self.book_type,
+                link=self.link,
+                purchaseID=self.purchaseID,
+            )
+        )
+
+    def __repr__(self):
+        return (
+            "Seller: {seller}\n"
+            "Price: {price}\n"
+            "rental: {rental}\n"
+            "book type: {book_type}\n"
+            "link: {link}\n"
+            "PurchaseID: {purchaseID}\n".format(
+                seller=self.seller,
+                price=self.price,
+                rental=self.is_rental,
+                book_type=self.book_type,
+                link=self.link,
+                purchaseID=self.purchaseID,
+            )
+        )
 
 class Book:
     def __init__(self, *args, **kwargs):
