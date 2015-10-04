@@ -151,3 +151,31 @@ def get_amazon_books_for_keyword(keyword):
     book_lists = map(parse_book_list_item_into_books, items)
     return [item for sublist in book_lists for item in sublist]
 
+
+def get_book_object_for_book_title(title):
+    def get_book_info_from_book_item(item):
+        book = Book()
+        book.title = top_item['volumeInfo']['title']
+        book.subtitle = top_item['volumeInfo']['subtitle']
+        book.author = top_item['volumeInfo']['authors']
+        book.thumbnail_link = top_item['volumeInfo']['imageLinks']['thumbnail']
+        book.isbn = (
+            top_item['volumeInfo']['industryIdentifiers'][0]['identifier']
+        )
+        return book
+
+    url = (
+        'https://www.googleapis.com/books/v1'
+        '/volumes?'
+        'q={search_terms}&key={API_KEY}'.format(
+            search_terms=title,
+            API_KEY=GOOGLE_BOOKS_API_KEY,
+        )
+    )
+
+    response = requests.get(url).json()
+
+    # For now, just pull top item. Might change later
+    top_item = response['items'][0]
+    book = get_book_info_from_book_item(top_item)
+    return book
