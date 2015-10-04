@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-class PurchaseChoice:
+class PurchaseOption:
     def __init__(self, *args, **kwargs):
         self.link = ''
         self.price = 0
@@ -170,3 +170,4 @@ def get_amazon_books_for_keyword(keyword):
     items = get_book_list_items_from_content(content)
     book_lists = map(parse_book_list_item_into_books, items)
     return [item for sublist in book_lists for item in sublist]
+
