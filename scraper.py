@@ -188,20 +188,34 @@ def get_Barnes_book_prices_for_keyword(keyword):
     soup = BeautifulSoup(content)
     list_wrapper_item = soup.find('li', class_='clearer')
     list_items = list_wrapper_item.find_all('li')
-    #print list_items
+    list_PurchaseOptions = []
     for item in list_items:
+        new_PurchaseOption = PurchaseOption()
         product_info = item.find('div', class_='product-info')  #get info of book
         if not product_info:
             continue
-        item_title = product_info.find('h2')    #get title
-        print item_title.get_text()
+        item_url_extension = product_info.find('h2').find('a').attrs['href']
+        item_base = "http://www.barnesandnoble.com"
+        item_url = item_base+item_url_extension
+        new_PurchaseOption.link = item_url          #get link
+
+        new_PurchaseOption.is_rental = 'false' #isRental
+        new_PurchaseOption.purchaseID = ''
 
         item_price = product_info.find('span', class_='price')      #get price
-        print item_price.get_text()
+        new_PurchaseOption.price = item_price.get_text()
 
-        item_type = product_info.find('ul', class_='formats')
+        item_type = product_info.find('ul', class_='formats')       #get book type
         item_type = item_type.find_all('a')[0]
-        print item_type.get_text()
+        new_PurchaseOption.book_type = item_type.get_text()
+
+        new_PurchaseOption.seller = 'Barnes and Noble'  #seller
+
+        if new_PurchaseOption:      #if purchaseoption exists, add to list
+            list_PurchaseOptions.append(new_PurchaseOption)
+    print list_PurchaseOptions
+
+
 
 def get_page_for_Chegg_book_search(keyword):
     search_string = (
