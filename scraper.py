@@ -1,6 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 
+GOOGLE_BOOKS_API_KEY = "AIzaSyAMbrk_RWZtJHNtew37Tg5kG_MT5JBUiLE"
+
+
 class PurchaseOption:
     def __init__(self, *args, **kwargs):
         self.link = ''
