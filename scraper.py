@@ -172,10 +172,12 @@ def get_amazon_books_for_keyword(keyword):
     return [item for sublist in book_lists for item in sublist]
 
 
-def get_page_for_google_books_book_search(keyword):
+
+
+def get_google_books_search_page_for_isbn(isbn):
     search_string = (
-        'https://www.google.com/search?tbm=bks&q='
-        '{search_string}'.format(search_string=keyword,)
+        'https://books.google.com/books?isbn='
+        '{search_string}'.format(search_string=isbn,)
     )
     return requests.get(search_string).content
 
@@ -187,6 +189,14 @@ def extract_google_books_page_link_from_li(item):
     )
     a_item = h3_item.find('a')
     return a_item.attrs['href']
+
+
+def get_google_books_page_link_for_isbn(isbn):
+    content = get_google_books_search_page_for_isbn(isbn)
+    soup = BeautifulSoup(content)
+    item = soup.find('li', class_='g')
+    link = extract_google_books_page_link_from_li(item)
+    return link
 
 
 # Sometimes link is a redirect link in google's format.
@@ -218,11 +228,13 @@ def convert_google_redirect_to_direct_link(redir_link):
 
 
 def extract_google_books_price_list_from_link(link):
+    #print link
     content = requests.get(link).content
     soup = BeautifulSoup(content)
     center = soup.find('div', id='volume-center')
     list_area = center.find('div', class_='about_content')
     list_items = list_area.find_all('tr')
+    array = []
     for item in list_items:
         price_span = item.find('span', class_='price')
         if price_span!=None:
@@ -232,19 +244,28 @@ def extract_google_books_price_list_from_link(link):
             seller_link = convert_google_redirect_to_direct_link(seller_link_redir)
             price_text = price_span.text
             price = float(price_text[1:])
-            print 'Buy Link:'
-            print seller_link
-            print 'Seller:'
-            print seller_name
-            print 'Price:'
-            print price
+            #print 'Buy Link:'
+            #print seller_link
+            #print 'Seller:'
+            #print seller_name
+            #print 'Price:'
+            #print price
+            option = PurchaseOption()
+            option.link = seller_link
+            option.price = price
+            option.seller = seller_name
+            option.book_type = 'print'
+            option.is_rental = False
+            option.purchaseID = ''
+            array.append(option)
+    return array
 
 
 # Sometimes link is a redirect link in google's format.
 # This function translates that to a direct link before extracting.
 def extract_google_books_price_list_from_redirect_link(redir_link):
     link = convert_google_redirect_to_direct_link(redir_link)
-    extract_google_books_price_list_from_link(link)
+    return extract_google_books_price_list_from_link(link)
 
 
 def extract_google_books_prices_from_page_link(link):
@@ -253,43 +274,58 @@ def extract_google_books_prices_from_page_link(link):
     get_button = soup.find('a', id='gb-get-book-content')
     button_text = get_button.text
     button_link = get_button.attrs['href']
-    if button_text.startswith('Buy eBook - $'):
+    if (button_text.startswith('Buy eBook - $') or button_text.startswith('EBOOK FROM $')):
         buy_link = convert_google_redirect_to_direct_link(button_link)
-        price_str = button_text[13:]
+        if button_text.startswith('Buy eBook - $'):
+            price_str = button_text[13:]
+        else:
+            price_str = button_text[12:]
         price = float(price_str)
-        print 'Buy eBook:'
-        print buy_link
-        print 'Price:'
-        print price
+        #print 'Buy eBook:'
+        #print buy_link
+        #print 'Price:'
+        #print price
         print_link_div = soup.find('div', id='buy_v')
         print_link_href = print_link_div.find('a', id='get-all-sellers-link')
         print_link = print_link_href.attrs['href']
-        print 'Load List:'
-        extract_google_books_price_list_from_redirect_link(print_link)
+        #print 'Load List:'
+        array = extract_google_books_price_list_from_redirect_link(print_link)
+        option = PurchaseOption()
+        option.link = buy_link
+        option.price = price
+        option.seller = 'Google Play'
+        option.book_type = 'eBook'
+        option.is_rental = False
+        option.purchaseID = ''
+        array.append(option)
     elif button_text=='Get print book':
-        print 'Load List:'
-        extract_google_books_price_list_from_link(button_link)
+        #print 'Load List:'
+        array = extract_google_books_price_list_from_link(button_link)
     elif button_text=='View eBook':
-        print 'View eBook:'
+        #print 'View eBook:'
+        print_link_div = soup.find('div', id='buy_v')
+        print_link_href = print_link_div.find('a', id='get-all-sellers-link')
+        print_link = print_link_href.attrs['href']
+        #print 'Load List:'
+        array = extract_google_books_price_list_from_redirect_link(print_link)
         # recursively call this function, because the given link should go to a similar page
-        extract_google_books_prices_from_page_link(button_link)
+        array2 = extract_google_books_prices_from_page_link(button_link)
+        array.extend(array2)
     else:
-        print 'unrecognized button:'
-        print button_text
-        print button_link
-    #print content
-    #print get_button
+        array = []
+        #print 'unrecognized button:'
+        #print link
+        #print button_text
+        #print button_link
+    return array
 
 
-def get_google_books_book_prices_for_keyword(keyword):
-    content = get_page_for_google_books_book_search(keyword)
-    soup = BeautifulSoup(content)
-    list_items = soup.find_all('li', class_='g')
-    for item in list_items:
-        link = extract_google_books_page_link_from_li(item)
-        extract_google_books_prices_from_page_link(link)
+def get_google_books_for_isbn(isbn):
+    link = get_google_books_page_link_for_isbn(isbn)
+    return extract_google_books_prices_from_page_link(link)
 
 
-get_google_books_book_prices_for_keyword('compilers')
-#print get_amazon_books_for_keyword('compilers')
 
+
+
+print get_google_books_for_isbn('3540417818')
