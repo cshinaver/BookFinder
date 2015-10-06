@@ -90,8 +90,6 @@ def get_page_for_amazon_book_search(keyword):
         '&rh=n%3A283155%2Ck%3A{search_string}'.format(
             search_string=keyword,
         )
-        # http://www.amazon.com/s/ref=nb_sb_noss_1?url=search-alias
-        # %3Daps&field-keywords=compilers
     )
     return requests.get(search_string).content
 
@@ -178,43 +176,40 @@ def get_page_for_Barnes_book_search(keyword):
         'http://www.barnesandnoble.com/s/{search_string}?fs=0&_requestid=284459'.format(
             search_string=keyword,
         )
-        # http://www.amazon.com/s/ref=nb_sb_noss_1?url=search-alias
-        # %3Daps&field-keywords=compilers
     )
     return requests.get(search_string).content
 
 def get_Barnes_book_prices_for_keyword(keyword):
     content = get_page_for_Barnes_book_search(keyword)
     soup = BeautifulSoup(content)
-    if soup.find('li', class_='clearer'):
-        list_wrapper_item = soup.find('li', class_='clearer')
-        list_items = list_wrapper_item.find_all('li')
-        list_PurchaseOptions = []
-        for item in list_items:
-            new_PurchaseOption = PurchaseOption()
-            product_info = item.find('div', class_='product-info')  #get info of book
-            if not product_info:
-                continue
-            item_url_extension = product_info.find('h2').find('a').attrs['href']
-            item_base = "http://www.barnesandnoble.com"
-            item_url = item_base+item_url_extension
-            new_PurchaseOption.link = item_url          #get link
+    soup.find('div', class_='header')
+    if soup.find('section', id='prodSummary'):
+        new_PurchaseOption = PurchaseOption()
+        list_wrapper_item = soup.find('section', id='prodSummary')
+        product_info = list_wrapper_item.find('li', class_='tab selected')
+        #print list_wrapper_item
+        #product_info = list_wrapper_item.find('section', id='prodSummary')  #get info of book
+        #print list_wrapper_item
+        #print product_info.find_all('a')[0]
+        item_url_extension = (product_info.find_all('a')[0]).attrs['href']
+        item_base = "http://www.barnesandnoble.com"
+        item_url = item_base+item_url_extension
+        new_PurchaseOption.link = item_url          #get link
+        #print item_url
 
-            new_PurchaseOption.is_rental = 'false' #isRental
-            new_PurchaseOption.purchaseID = ''
+        new_PurchaseOption.is_rental = False #isRental
+        new_PurchaseOption.purchaseID = ''
 
-            item_price = product_info.find('span', class_='price')      #get price
-            new_PurchaseOption.price = item_price.get_text()
+        item_price = product_info.find_all('a')[1]     #get price
+        new_PurchaseOption.price = item_price.get_text()
 
-            item_type = product_info.find('ul', class_='formats')       #get book type
-            item_type = item_type.find_all('a')[0]
-            new_PurchaseOption.book_type = item_type.get_text()
+        #item_type = product_info.find('ul', class_='formats')       #get book type
+        item_type = product_info.find_all('a')[0]
+        new_PurchaseOption.book_type = item_type.get_text()
 
-            new_PurchaseOption.seller = 'Barnes and Noble'  #seller
+        new_PurchaseOption.seller = 'Barnes and Noble'  #seller
 
-            if new_PurchaseOption:      #if purchaseoption exists, add to list
-                list_PurchaseOptions.append(new_PurchaseOption)
-        return list_PurchaseOptions
+        return new_PurchaseOption
     else:
         print "No results found at 'http://www.barnesandnoble.com' for '%s'" %keyword
 
@@ -226,38 +221,6 @@ def get_page_for_Chegg_book_search(keyword):
         'federated?trackid=2ad2613f&strackid=520dd664&event=enter_submit#p=1'.format(
             search_string=keyword,
 
-            # http://www.chegg.com/search/compilers/
-            # federated?trackid=07041517&strackid=4105f5f3&event=enter_submit#p=1
-
-            # http://www.chegg.com/search/data%20structures%20c%2B%2B/
-            # federated?trackid=57ae47c4&strackid=187a3a14&event=enter_submit#p=1
-
-            # http://www.chegg.com/search/database/
-            # federated?trackid=2b4f7cbb&strackid=3596f6c9&event=enter_submit#p=1
-
-
         )
     )
     return requests.get(search_string).content
-
-
-def get_Chegg_book_prices_for_keyword(keyword):
-    #content = get_page_for_Chegg_book_search(keyword)
-    content = requests.get("http://www.chegg.com/search/compilers/federated?trackid=66da70d5&strackid=170c806a&event=enter_submit#p=1").content
-    print content
-    soup = BeautifulSoup(content)
-    import ipdb; ipdb.set_trace()
-    list_items = soup.find_all('li', class_='item-result Chgsec_ls')
-    print 'Chegg items: '
-    for item in list_items:
-        #print 'loop'
-        #print item
-        print item.find_all(
-            'span',
-            class_='price',
-        )
-
-
-#get_amazon_book_prices_for_keyword('compilers')
-#get_Chegg_book_prices_for_keyword('compilers')
-print get_Barnes_book_prices_for_keyword('48391750341')
