@@ -187,15 +187,11 @@ def get_Barnes_book_prices_for_keyword(keyword):
         new_PurchaseOption = PurchaseOption()
         list_wrapper_item = soup.find('section', id='prodSummary')
         product_info = list_wrapper_item.find('li', class_='tab selected')
-        #print list_wrapper_item
-        #product_info = list_wrapper_item.find('section', id='prodSummary')  #get info of book
-        #print list_wrapper_item
-        #print product_info.find_all('a')[0]
+
         item_url_extension = (product_info.find_all('a')[0]).attrs['href']
         item_base = "http://www.barnesandnoble.com"
         item_url = item_base+item_url_extension
         new_PurchaseOption.link = item_url          #get link
-        #print item_url
 
         new_PurchaseOption.is_rental = False #isRental
         new_PurchaseOption.purchaseID = ''
@@ -203,8 +199,7 @@ def get_Barnes_book_prices_for_keyword(keyword):
         item_price = product_info.find_all('a')[1]     #get price
         new_PurchaseOption.price = item_price.get_text()
 
-        #item_type = product_info.find('ul', class_='formats')       #get book type
-        item_type = product_info.find_all('a')[0]
+        item_type = product_info.find_all('a')[0]   #get book type
         new_PurchaseOption.book_type = item_type.get_text()
 
         new_PurchaseOption.seller = 'Barnes and Noble'  #seller
