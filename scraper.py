@@ -244,12 +244,6 @@ def extract_google_books_price_list_from_link(link):
             seller_link = convert_google_redirect_to_direct_link(seller_link_redir)
             price_text = price_span.text
             price = float(price_text[1:])
-            #print 'Buy Link:'
-            #print seller_link
-            #print 'Seller:'
-            #print seller_name
-            #print 'Price:'
-            #print price
             option = PurchaseOption()
             option.link = seller_link
             option.price = price
@@ -281,14 +275,9 @@ def extract_google_books_prices_from_page_link(link):
         else:
             price_str = button_text[12:]
         price = float(price_str)
-        #print 'Buy eBook:'
-        #print buy_link
-        #print 'Price:'
-        #print price
         print_link_div = soup.find('div', id='buy_v')
         print_link_href = print_link_div.find('a', id='get-all-sellers-link')
         print_link = print_link_href.attrs['href']
-        #print 'Load List:'
         array = extract_google_books_price_list_from_redirect_link(print_link)
         option = PurchaseOption()
         option.link = buy_link
@@ -299,24 +288,17 @@ def extract_google_books_prices_from_page_link(link):
         option.purchaseID = ''
         array.append(option)
     elif button_text=='Get print book':
-        #print 'Load List:'
         array = extract_google_books_price_list_from_link(button_link)
     elif button_text=='View eBook':
-        #print 'View eBook:'
         print_link_div = soup.find('div', id='buy_v')
         print_link_href = print_link_div.find('a', id='get-all-sellers-link')
         print_link = print_link_href.attrs['href']
-        #print 'Load List:'
         array = extract_google_books_price_list_from_redirect_link(print_link)
         # recursively call this function, because the given link should go to a similar page
         array2 = extract_google_books_prices_from_page_link(button_link)
         array.extend(array2)
     else:
         array = []
-        #print 'unrecognized button:'
-        #print link
-        #print button_text
-        #print button_link
     return array
 
 
