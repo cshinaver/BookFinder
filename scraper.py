@@ -228,7 +228,6 @@ def convert_google_redirect_to_direct_link(redir_link):
 
 
 def extract_google_books_price_list_from_link(link):
-    #print link
     content = requests.get(link).content
     soup = BeautifulSoup(content)
     center = soup.find('div', id='volume-center')
