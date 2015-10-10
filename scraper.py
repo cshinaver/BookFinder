@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import re
 from re import sub
 from decimal import Decimal
 
@@ -208,14 +209,13 @@ def get_google_books_page_link_for_isbn(isbn):
 # Sometimes link is a redirect link in google's format.
 # This function translates that to a direct link.
 def convert_google_redirect_to_direct_link(redir_link):
-    link_pos = redir_link.find('&q=') + 3
-    if not redir_link.startswith('/url?'):
+    redir_match = re.search(r"&q=(.*)", redir_link) # Grab link text
+    if redir_match==None:
         return redir_link
-    # returns -1 if not found
-    if link_pos==2:
+    if not redir_link.startswith('/url?'): # check to make sure is a relative redirect link, not another site's link with q= in address
         return redir_link
-    link_sub = redir_link[link_pos:]
-    full_redir_link = 'https://www.google.com/url?rct=j&url=' + link_sub
+    redir_sub = redir_match.group(1)
+    full_redir_link = 'https://www.google.com/url?rct=j&url=' + redir_sub
     content = requests.get(full_redir_link).content
     soup = BeautifulSoup(content)
     body = soup.find('body')
