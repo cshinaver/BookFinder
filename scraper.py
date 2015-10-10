@@ -272,9 +272,11 @@ def extract_google_books_prices_from_page_link(link):
     get_button = soup.find('a', id='gb-get-book-content')
     button_text = get_button.text
     button_link = get_button.attrs['href']
-    if (button_text.startswith('Buy eBook - $') or button_text.startswith('EBOOK FROM $')):
+    isBuyEBOOK = button_text.startswith('Buy eBook - $')
+    isEBOOKfrom = button_text.startswith('EBOOK FROM $')
+    if (isBuyEBOOK or isEBOOKfrom):
         buy_link = convert_google_redirect_to_direct_link(button_link)
-        if button_text.startswith('Buy eBook - $'):
+        if isBuyEBOOK:
             price_str = button_text[12:]
         else:
             price_str = button_text[11:]
