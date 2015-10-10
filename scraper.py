@@ -224,8 +224,7 @@ def convert_google_redirect_to_direct_link(redir_link):
     if body==None:
         META = soup.find('meta')
         meta_content = META.attrs['content']
-        link = meta_content[7:]
-        link = link[:(len(link) - 1)]
+        link = re.match(r"0;URL='(.*)'", meta_content).group(1)
     else:
         all_links = soup.find_all('a')
         first_link = all_links[0]
