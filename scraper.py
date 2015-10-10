@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+from re import sub
+from decimal import Decimal
 
 class PurchaseOption:
     def __init__(self, *args, **kwargs):
@@ -174,6 +176,10 @@ def get_amazon_books_for_keyword(keyword):
 
 
 
+def money_to_dec(money_str):
+    return Decimal(sub(r'[^\d.]', '', money_str))
+
+
 def get_google_books_search_page_for_isbn(isbn):
     search_string = (
         'https://books.google.com/books?isbn='
@@ -242,7 +248,7 @@ def extract_google_books_price_list_from_link(link):
             seller_link_redir = seller_link_href.attrs['href'] 
             seller_link = convert_google_redirect_to_direct_link(seller_link_redir)
             price_text = price_span.text
-            price = float(price_text[1:])
+            price = money_to_dec(price_text)
             option = PurchaseOption()
             option.link = seller_link
             option.price = price
@@ -270,10 +276,10 @@ def extract_google_books_prices_from_page_link(link):
     if (button_text.startswith('Buy eBook - $') or button_text.startswith('EBOOK FROM $')):
         buy_link = convert_google_redirect_to_direct_link(button_link)
         if button_text.startswith('Buy eBook - $'):
-            price_str = button_text[13:]
-        else:
             price_str = button_text[12:]
-        price = float(price_str)
+        else:
+            price_str = button_text[11:]
+        price = money_to_dec(price_str)
         print_link_div = soup.find('div', id='buy_v')
         print_link_href = print_link_div.find('a', id='get-all-sellers-link')
         print_link = print_link_href.attrs['href']
