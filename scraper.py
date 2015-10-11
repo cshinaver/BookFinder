@@ -291,11 +291,11 @@ def get_google_books_for_isbn(isbn):
         get_button = soup.find('a', id='gb-get-book-content')
         button_text = get_button.text
         button_link = get_button.attrs['href']
-        isBuyEBOOK = button_text.startswith('Buy eBook - $')
-        isEBOOKfrom = button_text.startswith('EBOOK FROM $')
-        if (isBuyEBOOK or isEBOOKfrom):
+        is_buy_ebook = button_text.startswith('Buy eBook - $')
+        is_ebook_from = button_text.startswith('EBOOK FROM $')
+        if (is_buy_ebook or is_ebook_from):
             buy_link = convert_google_redirect_to_direct_link(button_link)
-            if isBuyEBOOK:
+            if is_buy_ebook:
                 price_str = button_text[12:]
             else:
                 price_str = button_text[11:]
