@@ -263,13 +263,22 @@ def get_google_books_for_isbn(isbn):
                 price_span = item.find('span', class_='price')
                 if price_span is not None:
                     seller_link_href = item.find('a')
-                    seller_name = seller_link_href.text
                     seller_link_redir = seller_link_href.attrs['href']
                     seller_link = convert_google_redirect_to_direct_link(
                         seller_link_redir,
                     )
                     price_text = price_span.text
                     price = money_to_dec(price_text)
+                    # When tested, prices listed for Amazon from Google Books
+                    # were inaccurate (possibly outdated).
+                    # Since we already have an Amazon scraper, there's no
+                    # reason to keep book items from Amazon
+                    # (they would probably show up as duplicated entries)
+                    seller_name = seller_link_href.text
+                    if "Amazon" in seller_name:
+                        continue
+
+                    # Create purchase option from book listings information
                     option = PurchaseOption()
                     option.link = seller_link
                     option.price = price
