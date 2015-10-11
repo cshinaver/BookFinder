@@ -1,6 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 
+GOOGLE_BOOKS_API_KEY = "AIzaSyAMbrk_RWZtJHNtew37Tg5kG_MT5JBUiLE"
+
+
 class PurchaseOption:
     def __init__(self, *args, **kwargs):
         self.link = ''
@@ -44,41 +47,21 @@ class PurchaseOption:
             )
         )
 
+
 class Book:
     def __init__(self, *args, **kwargs):
-        self.link = ''
-        self.price = 0
         self.title = ''
-        self.book_type = ''
-        self.is_rental = False
-
-    def __str__(self):
-        return (
-            "Title: {title}\n"
-            "Price: {price}\n"
-            "rental: {rental}\n"
-            "book type: {book_type}\n"
-            "link: {link}\n".format(
-                title=self.title,
-                price=self.price,
-                rental=self.is_rental,
-                book_type=self.book_type,
-                link=self.link,
-            )
-        )
 
     def __repr__(self):
         return (
             "Title: {title}\n"
-            "Price: {price}\n"
-            "rental: {rental}\n"
-            "book type: {book_type}\n"
-            "link: {link}\n".format(
+            "Subtitle: {subtitle}\n"
+            "ISBN: {ISBN}\n"
+            "Thumbnail link: {thumbnail_link}\n".format(
                 title=self.title,
-                price=self.price,
-                rental=self.is_rental,
-                book_type=self.book_type,
-                link=self.link,
+                subtitle=self.subtitle,
+                ISBN=self.isbn,
+                thumbnail_link=self.thumbnail_link,
             )
         )
 
@@ -102,7 +85,7 @@ def get_amazon_books_for_keyword(keyword):
         return book_list_items
 
     def parse_price_bulk_item_into_book(item, title):
-        new_book = Book()
+        new_book = PurchaseOption()
         price_tag = item.find(
             'span',
             class_="a-size-base a-color-price s-price a-text-bold",
@@ -208,14 +191,38 @@ def get_Barnes_book_prices_for_keyword(keyword):
     else:
         print "No results found at 'http://www.barnesandnoble.com' for '%s'" %keyword
 
+def get_book_object_for_book_title(title):
+    def get_book_info_from_book_item(item):
+        book = Book()
+        volume_info = top_item['volumeInfo']
+        if not volume_info:
+            return None
+        book.title = volume_info['title']
+        book.subtitle = volume_info.get('subtitle')
+        book.author = volume_info.get('authors')
+        image_links = volume_info.get(
+            'imageLinks'
+        )
+        if image_links:
+            book.thumbnail_link = image_links.get('thumbnail')
 
+        book.isbn = (
+            volume_info['industryIdentifiers'][0]['identifier']
+        )
+        return book
 
-def get_page_for_Chegg_book_search(keyword):
-    search_string = (
-        'http://www.chegg.com/search/{search_string}/'
-        'federated?trackid=2ad2613f&strackid=520dd664&event=enter_submit#p=1'.format(
-            search_string=keyword,
-
+    url = (
+        'https://www.googleapis.com/books/v1'
+        '/volumes?'
+        'q={search_terms}&key={API_KEY}'.format(
+            search_terms=title,
+            API_KEY=GOOGLE_BOOKS_API_KEY,
         )
     )
-    return requests.get(search_string).content
+
+    response = requests.get(url).json()
+
+    # For now, just pull top item. Might change later
+    top_item = response['items'][0]
+    book = get_book_info_from_book_item(top_item)
+    return book
