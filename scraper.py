@@ -166,6 +166,7 @@ def get_Barnes_book_prices_for_keyword(keyword):
     content = get_page_for_Barnes_book_search(keyword)
     soup = BeautifulSoup(content)
     soup.find('div', class_='header')
+    list_books = []
     if soup.find('section', id='prodSummary'):
         new_PurchaseOption = PurchaseOption()
         list_wrapper_item = soup.find('section', id='prodSummary')
@@ -187,7 +188,26 @@ def get_Barnes_book_prices_for_keyword(keyword):
 
         new_PurchaseOption.seller = 'Barnes and Noble'  #seller
 
-        return new_PurchaseOption
+        list_books.append(new_PurchaseOption) #add purchased booko
+
+        new_rental = soup.find('section', id='skuSelection')
+        #print new_rental
+        #print new_rental.find('p', class_='price rental-price')
+        if(new_rental.find('p', class_='price rental-price')):
+            new_rental_option = PurchaseOption()
+            new_rental_option.link = item_url
+            new_rental_option.is_rental = True
+            new_rental_option.purchaseID = ''
+            rent_price = new_rental.find('p', class_='price rental-price').get_text() #price
+            new_rental_option.price = rent_price
+            rental_type = soup.find('section', id='prodPromo')
+            rental_type = rental_type.find('h2').get_text()
+            new_rental_option.book_type = rental_type
+
+            new_rental_option.seller = 'Barnes and Noble'  #seller
+            list_books.append(new_rental_option)
+
+        return list_books
     else:
         print "No results found at 'http://www.barnesandnoble.com' for '%s'" %keyword
 
@@ -226,3 +246,6 @@ def get_book_object_for_book_title(title):
     top_item = response['items'][0]
     book = get_book_info_from_book_item(top_item)
     return book
+
+
+print get_Barnes_book_prices_for_keyword('9780136067054')
