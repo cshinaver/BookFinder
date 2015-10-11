@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 import re
-from re import sub
 from decimal import Decimal
 
 GOOGLE_BOOKS_API_KEY = "AIzaSyAMbrk_RWZtJHNtew37Tg5kG_MT5JBUiLE"
@@ -220,7 +219,7 @@ def get_google_books_for_isbn(isbn):
 
     def extract_google_books_prices_from_page_link(link):
         def money_to_dec(money_str):
-            return Decimal(sub(r'[^\d.]', '', money_str))
+            return Decimal(re.sub(r'[^\d.]', '', money_str))
 
         # Sometimes link is a redirect link in google's format.
         # This function translates that to a direct link.
