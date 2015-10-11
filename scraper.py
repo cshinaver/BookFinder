@@ -191,8 +191,6 @@ def get_Barnes_book_prices_for_keyword(keyword):
         list_books.append(new_PurchaseOption) #add purchased booko
 
         new_rental = soup.find('section', id='skuSelection')
-        #print new_rental
-        #print new_rental.find('p', class_='price rental-price')
         if(new_rental.find('p', class_='price rental-price')):
             new_rental_option = PurchaseOption()
             new_rental_option.link = item_url
@@ -246,6 +244,3 @@ def get_book_object_for_book_title(title):
     top_item = response['items'][0]
     book = get_book_info_from_book_item(top_item)
     return book
-
-
-print get_Barnes_book_prices_for_keyword('9780136067054')
