@@ -300,6 +300,8 @@ def get_google_books_for_isbn(isbn):
         get_button = soup.find('a', id='gb-get-book-content')
         button_text = get_button.text
         button_link = get_button.attrs['href']
+        # Button has two possible formats for eBooks.
+        # They should be handled almost the same, so they are separated into boolean variables.
         is_buy_ebook = button_text.startswith('Buy eBook - $')
         is_ebook_from = button_text.startswith('EBOOK FROM $')
         if (is_buy_ebook or is_ebook_from):
@@ -326,10 +328,12 @@ def get_google_books_for_isbn(isbn):
             option.is_rental = False
             option.purchaseID = ''
             option_list.append(option)
+        # a "Get print book" link provides a link to a list of prices, so load that page.
         elif button_text == 'Get print book':
             option_list = extract_google_books_price_list_from_link(
                 button_link,
             )
+        # a "View eBook" link provides a link to a "Buy eBook" page.
         elif button_text == 'View eBook':
             print_link_div = soup.find('div', id='buy_v')
             print_link_href = print_link_div.find(
