@@ -195,8 +195,6 @@ def get_book_object_for_book_title(title):
     return book
 
 
-
-
 def get_google_books_for_isbn(isbn):
     def get_google_books_page_link_for_isbn(isbn):
         def get_google_books_search_page_for_isbn(isbn):
@@ -205,8 +203,7 @@ def get_google_books_for_isbn(isbn):
                 '{search_string}'.format(search_string=isbn,)
             )
             return requests.get(search_string).content
-        
-        
+
         def extract_google_books_page_link_from_li(item):
             h3_item = item.find(
                 'h3',
@@ -214,36 +211,39 @@ def get_google_books_for_isbn(isbn):
             )
             a_item = h3_item.find('a')
             return a_item.attrs['href']
-        
-        
+
         content = get_google_books_search_page_for_isbn(isbn)
         soup = BeautifulSoup(content)
         item = soup.find('li', class_='g')
         link = extract_google_books_page_link_from_li(item)
         return link
-    
-    
+
     def extract_google_books_prices_from_page_link(link):
         def money_to_dec(money_str):
             return Decimal(sub(r'[^\d.]', '', money_str))
-        
-        
+
         # Sometimes link is a redirect link in google's format.
         # This function translates that to a direct link.
         def convert_google_redirect_to_direct_link(redir_link):
-            redir_match = re.search(r"&q=(.*)", redir_link) # Grab link text
-            if redir_match==None:
+            redir_match = re.search(r"&q=(.*)", redir_link)  # Grab link text
+            if redir_match is None:
                 return redir_link
-            if not redir_link.startswith('/url?'): # check to make sure is a relative redirect link, not another site's link with q= in address
+            # Check to make sure is a relative redirect link,
+            # not another site's link with q= in address
+            if not redir_link.startswith('/url?'):
                 return redir_link
             redir_sub = redir_match.group(1)
-            full_redir_link = 'https://www.google.com/url?rct=j&url=' + redir_sub
+            full_redir_link = (
+                'https://www.google.com/url?rct=j&url=' + redir_sub
+            )
             content = requests.get(full_redir_link).content
             soup = BeautifulSoup(content)
             body = soup.find('body')
-            # if has no body, is probably actually a redirect page - grab the redirect link
-            # otherwise, is probably a redirect warning - pull the continue link
-            if body==None:
+            # if has no body,
+            # is probably actually a redirect page - grab the redirect link
+            # otherwise,
+            # is probably a redirect warning - pull the continue link
+            if body is None:
                 META = soup.find('meta')
                 meta_content = META.attrs['content']
                 link = re.match(r"0;URL='(.*)'", meta_content).group(1)
@@ -252,8 +252,7 @@ def get_google_books_for_isbn(isbn):
                 first_link = all_links[0]
                 link = first_link.attrs['href']
             return link
-        
-        
+
         def extract_google_books_price_list_from_link(link):
             content = requests.get(link).content
             soup = BeautifulSoup(content)
@@ -263,11 +262,13 @@ def get_google_books_for_isbn(isbn):
             option_list = []
             for item in list_items:
                 price_span = item.find('span', class_='price')
-                if price_span!=None:
+                if price_span is not None:
                     seller_link_href = item.find('a')
                     seller_name = seller_link_href.text
-                    seller_link_redir = seller_link_href.attrs['href'] 
-                    seller_link = convert_google_redirect_to_direct_link(seller_link_redir)
+                    seller_link_redir = seller_link_href.attrs['href']
+                    seller_link = convert_google_redirect_to_direct_link(
+                        seller_link_redir,
+                    )
                     price_text = price_span.text
                     price = money_to_dec(price_text)
                     option = PurchaseOption()
@@ -279,15 +280,13 @@ def get_google_books_for_isbn(isbn):
                     option.purchaseID = ''
                     option_list.append(option)
             return option_list
-        
-        
+
         # Sometimes link is a redirect link in google's format.
         # This function translates that to a direct link before extracting.
         def extract_google_books_price_list_from_redirect_link(redir_link):
             link = convert_google_redirect_to_direct_link(redir_link)
             return extract_google_books_price_list_from_link(link)
-        
-        
+
         content = requests.get(link).content
         soup = BeautifulSoup(content)
         get_button = soup.find('a', id='gb-get-book-content')
@@ -303,9 +302,14 @@ def get_google_books_for_isbn(isbn):
                 price_str = button_text[11:]
             price = money_to_dec(price_str)
             print_link_div = soup.find('div', id='buy_v')
-            print_link_href = print_link_div.find('a', id='get-all-sellers-link')
+            print_link_href = print_link_div.find(
+                'a',
+                id='get-all-sellers-link',
+            )
             print_link = print_link_href.attrs['href']
-            option_list = extract_google_books_price_list_from_redirect_link(print_link)
+            option_list = extract_google_books_price_list_from_redirect_link(
+                print_link,
+            )
             option = PurchaseOption()
             option.link = buy_link
             option.price = price
@@ -314,20 +318,29 @@ def get_google_books_for_isbn(isbn):
             option.is_rental = False
             option.purchaseID = ''
             option_list.append(option)
-        elif button_text=='Get print book':
-            option_list = extract_google_books_price_list_from_link(button_link)
-        elif button_text=='View eBook':
+        elif button_text == 'Get print book':
+            option_list = extract_google_books_price_list_from_link(
+                button_link,
+            )
+        elif button_text == 'View eBook':
             print_link_div = soup.find('div', id='buy_v')
-            print_link_href = print_link_div.find('a', id='get-all-sellers-link')
+            print_link_href = print_link_div.find(
+                'a',
+                id='get-all-sellers-link',
+            )
             print_link = print_link_href.attrs['href']
-            option_list = extract_google_books_price_list_from_redirect_link(print_link)
-            # recursively call this function, because the given link should go to a similar page
-            option_list_2 = extract_google_books_prices_from_page_link(button_link)
+            option_list = extract_google_books_price_list_from_redirect_link(
+                print_link,
+            )
+            # recursively call this function,
+            # because the given link should go to a similar page
+            option_list_2 = extract_google_books_prices_from_page_link(
+                button_link,
+            )
             option_list.extend(option_list_2)
         else:
             option_list = []
         return option_list
-    
-    
+
     link = get_google_books_page_link_for_isbn(isbn)
     return extract_google_books_prices_from_page_link(link)
