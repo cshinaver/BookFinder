@@ -154,15 +154,17 @@ def get_amazon_books_for_keyword(keyword):
     book_lists = map(parse_book_list_item_into_books, items)
     return [item for sublist in book_lists for item in sublist]
 
-def get_page_for_Barnes_book_search(keyword):
-    search_string = (
-        'http://www.barnesandnoble.com/s/{search_string}?fs=0&_requestid=284459'.format(
-            search_string=keyword,
-        )
-    )
-    return requests.get(search_string).content
 
-def get_Barnes_book_prices_for_keyword(keyword):
+def get_Barnes_book_prices_for_isbn(keyword):
+    def get_page_for_Barnes_book_search(keyword):
+        search_string = (
+            'http://www.barnesandnoble.com'
+            '/s/{search_string}?fs=0&_requestid=284459'.format(
+                search_string=keyword,
+            )
+        )
+        return requests.get(search_string).content
+
     content = get_page_for_Barnes_book_search(keyword)
     soup = BeautifulSoup(content)
     soup.find('div', class_='header')
@@ -175,20 +177,20 @@ def get_Barnes_book_prices_for_keyword(keyword):
         item_url_extension = (product_info.find_all('a')[0]).attrs['href']
         item_base = "http://www.barnesandnoble.com"
         item_url = item_base+item_url_extension
-        new_PurchaseOption.link = item_url          #get link
+        new_PurchaseOption.link = item_url  # get link
 
-        new_PurchaseOption.is_rental = False #isRental
+        new_PurchaseOption.is_rental = False  # isRental
         new_PurchaseOption.purchaseID = ''
 
-        item_price = product_info.find_all('a')[1]     #get price
+        item_price = product_info.find_all('a')[1]  # get price
         new_PurchaseOption.price = item_price.get_text()
 
-        item_type = product_info.find_all('a')[0]   #get book type
+        item_type = product_info.find_all('a')[0]  # get book type
         new_PurchaseOption.book_type = item_type.get_text()
 
-        new_PurchaseOption.seller = 'Barnes and Noble'  #seller
+        new_PurchaseOption.seller = 'Barnes and Noble'  # seller
 
-        list_books.append(new_PurchaseOption) #add purchased booko
+        list_books.append(new_PurchaseOption)  # add purchased booko
 
         new_rental = soup.find('section', id='skuSelection')
         if(new_rental.find('p', class_='price rental-price')):
@@ -196,18 +198,27 @@ def get_Barnes_book_prices_for_keyword(keyword):
             new_rental_option.link = item_url
             new_rental_option.is_rental = True
             new_rental_option.purchaseID = ''
-            rent_price = new_rental.find('p', class_='price rental-price').get_text() #price
+            rent_price = new_rental.find(
+                'p',
+                class_='price rental-price',
+            ).get_text()  # price
             new_rental_option.price = rent_price
             rental_type = soup.find('section', id='prodPromo')
             rental_type = rental_type.find('h2').get_text()
             new_rental_option.book_type = rental_type
 
-            new_rental_option.seller = 'Barnes and Noble'  #seller
+            new_rental_option.seller = 'Barnes and Noble'  # seller
             list_books.append(new_rental_option)
 
         return list_books
     else:
-        print "No results found at 'http://www.barnesandnoble.com' for '%s'" %keyword
+        print (
+            "No results found at "
+            "'http://www.barnesandnoble.com' for '{keyword}'".format(
+                keyword=keyword,
+            )
+        )
+
 
 def get_book_object_for_book_title(title):
     def get_book_info_from_book_item(item):
@@ -225,7 +236,7 @@ def get_book_object_for_book_title(title):
             book.thumbnail_link = image_links.get('thumbnail')
 
         book.isbn = (
-            volume_info['industryIdentifiers'][0]['identifier']
+            volume_info['industryIdentifiers'][1]['identifier']
         )
         return book
 
