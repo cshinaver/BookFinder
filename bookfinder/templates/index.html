@@ -1,7 +1,96 @@
-<html>
-    <head>
-    </head>
-    <body>
-        <h1> Welcome to our initial html page for the BookFinder project</h1>
-    </body>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+		<title>BookFinder</title>
+
+		<!-- Bootstrap -->
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+
+		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+	<body>
+		<div id="title-bar" class="navbar navbar-default navbar-fixed-top">
+			<div class="container">
+				<div class="navbar-header">
+					<button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#">BookFinder</a>
+				</div>
+				<div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1">
+					<ol class="nav navbar-nav navbar-right">
+						<li id="search-bar">
+							<form class="navbar-form" role="search">
+								<div class="form-group">
+									<input class="form-control" type="text" placeholder="Title">
+								</div>
+								<button class="btn btn-default" type="submit">Search</button>
+							</form>
+						</li>
+						<li id="sign-in-button" class="active"><a href="javascript:open_sign_in()" id="sign-in-href">Sign In</a></li>
+						<li id="sign-in-drop-down" class="dropdown" style="display:none">
+							<a class="dropdown-toggle" role="button" aria-expanded="false" href="#" data-toggle="dropdown">
+								<span id="sign-in-name">Sign Out</span> <span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="javascript:sign_out()">Sign Out</a></li>
+							</ul>
+						</li>
+					</ol>
+				</div>
+			</div>
+		</div>
+		<div id="sign-in-dialog" class="modal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<A class="close" aria-hidden="true" href="javascript:close_sign_in()">×</A>
+						<h4 class="modal-title">Sign in</h4>
+					</div>
+					<div class="modal-body">
+						<!--This is the body of the sign-in dialog-->
+						<form class="form-horizontal">
+							<input id="sign-in-field_name" class="form-control" type="text" placeholder="Username">
+						</form>
+					</div>
+					<div class="modal-footer">
+						<A class="btn btn-default" href="javascript:close_sign_in()">Cancel</A>
+						<A class="btn btn-primary" href="javascript:sign_in()">Sign In</A>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div class="page-header"></div>
+			<div id="lipsum">
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer facilisis ultricies nisl ut convallis. Donec egestas vehicula ante, ac tempus erat. Nunc ac metus suscipit magna auctor viverra. Integer elementum porttitor arcu, molestie semper massa congue facilisis. Aenean scelerisque dui vel elit bibendum dapibus. Ut ultricies erat in lacus fermentum vestibulum. Duis maximus lorem non scelerisque tristique. Proin cursus odio lacus, vel pulvinar purus placerat sed. Vivamus aliquet porta accumsan. Suspendisse nec luctus libero. Donec mi nisi, laoreet in nisl eu, semper finibus eros. Maecenas ullamcorper, ipsum ut pulvinar interdum, ex arcu vehicula libero, ut iaculis ex metus vel metus. Pellentesque in erat nec nibh malesuada pharetra sit amet ac diam. Sed massa velit, vehicula a efficitur id, bibendum aliquam eros.</p>
+				<p>Aliquam at vestibulum ante, quis ullamcorper eros. Praesent vitae purus eget lectus molestie suscipit. Vestibulum sit amet pharetra orci, tincidunt dapibus nunc. Morbi scelerisque tellus quis tempor ultricies. Vestibulum quis orci id augue pretium vestibulum. Nam id nisl eu tortor dapibus sodales in nec tellus. Aenean suscipit vulputate eros sit amet ullamcorper. Donec eget ullamcorper odio, a vulputate purus.</p>
+				<p>Quisque molestie lacus quis massa consequat, vel ultrices odio consectetur. Donec et arcu in nisi blandit varius. Nulla iaculis viverra ligula ut posuere. Vestibulum et vulputate eros, at pharetra ipsum. Nulla cursus non eros et mollis. Quisque felis sapien, porttitor at sodales quis, tempor vel massa. Nunc at eros mi. Etiam hendrerit, erat porta viverra posuere, justo ligula commodo quam, cursus efficitur tortor nisl egestas lectus.</p>
+				<p>Proin ornare tempor cursus. Cras maximus neque tellus, eget imperdiet ex tristique vitae. Duis sodales dictum risus non gravida. Sed ut sem neque. Nullam dictum arcu lectus, ut ultrices ex egestas non. Nullam vitae dolor consectetur, pretium est in, condimentum nulla. Nulla lacus dolor, consectetur et pellentesque nec, euismod a sapien. Maecenas dapibus condimentum lorem vel convallis. In erat risus, finibus vitae sem ut, rhoncus iaculis leo. Nunc sit amet lobortis felis. Duis interdum urna in lorem pharetra, nec varius justo faucibus. Aliquam ut maximus ante.</p>
+				<p>Maecenas in risus augue. Mauris dui nisl, ornare vitae sem non, venenatis aliquet tellus. Integer vel accumsan erat. Pellentesque a est sit amet nunc elementum commodo. Ut magna ipsum, mattis vitae efficitur nec, tempor vitae nisi. Praesent vitae orci aliquam, imperdiet elit consequat, dictum diam. Pellentesque pulvinar a ex id tempor. Pellentesque fermentum a urna non sagittis. Aliquam viverra tempor arcu at finibus. Praesent purus quam, dignissim eu libero at, porttitor sodales nisl.</p>
+				<p>Nam scelerisque eget neque et tincidunt. Etiam feugiat consequat tortor eu consectetur. Phasellus vitae dolor pellentesque, laoreet felis at, rutrum sapien. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce in vestibulum tortor. Proin porta et orci sed auctor. Duis ligula lectus, consectetur a pharetra et, tempor sed nisi. Donec justo velit, placerat sit amet nulla et, venenatis fringilla sapien. Curabitur pellentesque justo mollis nibh convallis, in porttitor risus dapibus. Cras a orci ut sapien fermentum rutrum eget at dui. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ut mauris non felis tincidunt tincidunt ac ac massa. Nunc condimentum, ipsum sit amet interdum fringilla, ipsum diam interdum nibh, et venenatis velit quam in mauris. Ut condimentum justo ut faucibus pellentesque. Mauris quis magna id ante porttitor fermentum laoreet in velit.</p>
+				<p>Curabitur luctus fermentum eros, sed tincidunt ex luctus sodales. Quisque hendrerit semper mattis. Duis a volutpat nisi. Maecenas porttitor non odio nec imperdiet. Donec pulvinar ligula ac dolor ornare, in posuere purus ullamcorper. Sed tempus fringilla congue. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Etiam ut est nibh. Donec semper mauris ut est gravida, id commodo elit elementum. Praesent fermentum, erat ut porta pulvinar, nisl sapien tincidunt urna, eu egestas sapien mauris quis mi. Quisque non lacus ex. Donec quis velit quis nibh ullamcorper scelerisque. Etiam ac iaculis urna. Proin cursus tortor eu sagittis fermentum. Aenean velit nibh, venenatis eget erat eget, maximus efficitur nibh.</p>
+				<p>Ut libero dolor, vestibulum ut pretium quis, semper at eros. Proin dictum quis nisi a dapibus. Quisque turpis libero, euismod a elementum ultricies, ultricies at lacus. Aenean eu augue vel augue sodales pharetra at in nulla. Aenean condimentum vehicula efficitur. Praesent rhoncus sem et libero vestibulum auctor. Duis consequat massa id tellus efficitur, eu sollicitudin risus elementum. Donec eu placerat mi. Nulla facilisi. Aliquam erat volutpat. Nullam et ultrices leo. Nulla placerat ipsum consequat sodales dapibus. Suspendisse lacus sapien, tristique sed viverra a, lacinia vitae ex.</p>
+				<p>Praesent dapibus scelerisque risus, ac volutpat velit tempus ut. Phasellus consectetur vitae felis vitae finibus. Vestibulum lacinia, orci eget euismod pharetra, sem nulla ultricies nisl, ac porttitor neque sem ut tellus. Aenean eleifend justo id diam elementum rhoncus. Nullam hendrerit, dolor ac vestibulum varius, nibh libero sollicitudin nunc, vel aliquam sem diam ac lacus. Donec consectetur turpis id lobortis facilisis. Donec commodo lacinia dolor et ultricies. Vivamus scelerisque lacus vel nibh pellentesque suscipit. Nam eu justo ut magna consectetur scelerisque sed et nisi. Nunc dolor erat, convallis ut elementum eget, cursus sit amet quam.</p>
+				<p>Nunc pharetra, tortor quis dictum commodo, urna dui vulputate augue, vel lobortis tellus arcu at nisi. In scelerisque nisl nec purus sodales sollicitudin. Ut nec sagittis dui. Donec laoreet gravida risus mattis viverra. Proin pulvinar magna id neque vehicula, ac pellentesque justo sodales. Donec fermentum venenatis felis ut vulputate. Maecenas molestie purus ante, nec ornare orci venenatis dictum. Donec non urna tincidunt, eleifend sem a, ultricies lorem. Donec quis elementum lacus, sed lacinia magna. Curabitur molestie urna mauris, ut facilisis sem ornare id. Morbi risus ante, gravida non ipsum id, rhoncus rutrum erat. Pellentesque eu fermentum arcu. Aliquam elementum dolor ipsum, in accumsan justo dapibus eu. Maecenas euismod vulputate lorem ac faucibus. In hac habitasse platea dictumst.</p>
+			</div>
+		</div>
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<!-- Include all compiled plugins (below), or include individual files as needed -->
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/signin.js"></script>
+	</body>
 </html>
