@@ -68,6 +68,15 @@ class Book:
         )
 
 
+def BookToDict(book):
+    return {
+        'Title': book.title,
+        'Subtitle': book.subtitle,
+        'isbn': book.isbn,
+        'Thumbnail_link': book.thumbnail_link
+        }
+
+
 def get_page_for_amazon_book_search(keyword):
     search_string = (
         'http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias'
@@ -220,43 +229,6 @@ def get_Barnes_book_prices_for_isbn(keyword):
                 keyword=keyword,
             )
         )
-
-
-def get_book_object_for_book_title(title):
-    def get_book_info_from_book_item(item):
-        book = Book()
-        volume_info = top_item['volumeInfo']
-        if not volume_info:
-            return None
-        book.title = volume_info['title']
-        book.subtitle = volume_info.get('subtitle')
-        book.author = volume_info.get('authors')
-        image_links = volume_info.get(
-            'imageLinks'
-        )
-        if image_links:
-            book.thumbnail_link = image_links.get('thumbnail')
-
-        book.isbn = (
-            volume_info['industryIdentifiers'][1]['identifier']
-        )
-        return book
-
-    url = (
-        'https://www.googleapis.com/books/v1'
-        '/volumes?'
-        'q={search_terms}&key={API_KEY}'.format(
-            search_terms=title,
-            API_KEY=GOOGLE_BOOKS_API_KEY,
-        )
-    )
-
-    response = requests.get(url).json()
-
-    # For now, just pull top item. Might change later
-    top_item = response['items'][0]
-    book = get_book_info_from_book_item(top_item)
-    return book
 
 
 def get_google_books_for_isbn(isbn):
@@ -421,3 +393,83 @@ def get_google_books_for_isbn(isbn):
 
     link = get_google_books_page_link_for_isbn(isbn)
     return extract_google_books_prices_from_page_link(link)
+
+
+def get_book_object_for_book_title(title):
+    def get_book_info_from_book_item(item):
+        book = Book()
+        volume_info = item['volumeInfo']
+        if not volume_info:
+            return None
+        book.title = volume_info['title']
+        book.subtitle = volume_info.get('subtitle')
+        book.author = volume_info.get('authors')
+        image_links = volume_info.get(
+            'imageLinks'
+        )
+        if image_links:
+            book.thumbnail_link = image_links.get('thumbnail')
+
+        book.isbn = (
+            volume_info['industryIdentifiers'][1]['identifier']
+        )
+        return book
+
+    url = (
+        'https://www.googleapis.com/books/v1'
+        '/volumes?'
+        'q={search_terms}&key={API_KEY}'.format(
+            search_terms=title,
+            API_KEY=GOOGLE_BOOKS_API_KEY,
+        )
+    )
+
+    response = requests.get(url).json()
+
+    # For now, just pull top item. Might change later
+    top_item = response['items'][0]
+    book = get_book_info_from_book_item(top_item)
+    return book
+
+
+def get_book_object_list_for_book_title(title):
+    def get_book_info_from_book_item(item):
+        book = Book()
+        volume_info = item['volumeInfo']
+        if not volume_info:
+            return None
+        book.title = volume_info['title']
+        book.subtitle = volume_info.get('subtitle')
+        book.author = volume_info.get('authors')
+        image_links = volume_info.get(
+            'imageLinks'
+        )
+        if image_links:
+            book.thumbnail_link = image_links.get('thumbnail')
+
+        identifiers = volume_info['industryIdentifiers']
+        # if there is only 1 identifier, don't use this book option
+        if len(identifiers)<2:
+            return None
+        book.isbn = (
+            identifiers[1]['identifier']
+        )
+        return book
+
+    url = (
+        'https://www.googleapis.com/books/v1'
+        '/volumes?'
+        'q={search_terms}&key={API_KEY}'.format(
+            search_terms=title,
+            API_KEY=GOOGLE_BOOKS_API_KEY,
+        )
+    )
+
+    response = requests.get(url).json()
+
+    books = []
+    for this_item in response['items']:
+        book = get_book_info_from_book_item(this_item)
+        if book!=None:
+            books.append(book)
+    return books

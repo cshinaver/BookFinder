@@ -85,11 +85,24 @@
 					</div>
 				</div>
 			</form>
+			<div id="result-list" class="list-group">
+				<a class="list-group-item">
+					<h4 class="list-group-item-heading">Please Wait...</h4>
+					<p class="list-group-item-text">Downloading search results.</p>
+				</a>
+			</div>
 		</div>
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<!-- Include all compiled plugins (below), or include individual files as needed -->
 		<script src="/static/js/bootstrap.min.js"></script>
 		<script src="/static/js/signin.js"></script>
+		<script src="/static/js/get-options.js"></script>
+		<script src="/static/js/get-file.js"></script>
+		<script src="./static/js/search.js"></script>
+		<script>
+			fill_search(get_option('title'));
+			get_book_list(get_option('title'));
+		</script>
 	</body>
 </html>
