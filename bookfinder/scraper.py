@@ -50,6 +50,17 @@ class PurchaseOption:
         )
 
 
+def PurchaseOption_to_dict(option):
+    return {
+        'seller': option.seller,
+        'price': option.price,
+        'rental': option.rental,
+        'book_type': option.book_type,
+        'link': option.link,
+        'purchaseID': option.purchaseID
+        }
+
+
 class Book:
     def __init__(self, *args, **kwargs):
         self.title = ''
@@ -68,7 +79,7 @@ class Book:
         )
 
 
-def BookToDict(book):
+def Book_to_dict(book):
     return {
         'Title': book.title,
         'Subtitle': book.subtitle,

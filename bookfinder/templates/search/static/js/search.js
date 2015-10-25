@@ -20,29 +20,36 @@ function fill_search(text) {
 
 function add_book_to_list(book) {
 	var new_entry = document.createElement("a");
-	//title:
-		var new_title = document.createElement("h4");
-		var new_title_text = document.createTextNode(book.Title);
-		new_title.appendChild(new_title_text);
-		new_title.setAttribute("class","list-group-item-heading");
-		new_entry.appendChild(new_title);
-	//subtitle:
-		var new_subtitle = document.createElement("p");
-		var new_subtitle_text = document.createTextNode(book.Subtitle);
-		new_subtitle.appendChild(new_subtitle_text);
-		new_subtitle.setAttribute("class","list-group-item-text");
-		new_entry.appendChild(new_subtitle);
-	//isbn:
-		var new_isbn = document.createElement("p");
-		var new_isbn_text = document.createTextNode(book.isbn);
-		new_isbn.appendChild(new_isbn_text);
-		new_isbn.setAttribute("class","list-group-item-text");
-		new_entry.appendChild(new_isbn);
-	//thumb:
-		var new_thumb = document.createElement("img");
-		new_thumb.setAttribute("src",book.Thumbnail_link);
-		new_thumb.setAttribute("class","list-group-item-text");
-		new_entry.appendChild(new_thumb);
+	//thumbnail:
+		var new_thumb_frame = document.createElement("div");
+			var new_thumb = document.createElement("img");
+			new_thumb.setAttribute("src",book.Thumbnail_link);
+			//new_thumb.setAttribute("class","list-group-item-text");
+			new_thumb_frame.appendChild(new_thumb);
+		new_thumb_frame.setAttribute("style","float:left;padding-right:10px;");
+		new_entry.appendChild(new_thumb_frame);
+	//info:
+		var new_info_frame = document.createElement("div");
+		//title:
+			var new_title = document.createElement("h4");
+			var new_title_text = document.createTextNode(book.Title);
+			new_title.appendChild(new_title_text);
+			new_title.setAttribute("class","list-group-item-heading");
+			new_info_frame.appendChild(new_title);
+		//subtitle:
+			var new_subtitle = document.createElement("p");
+			var new_subtitle_text = document.createTextNode(book.Subtitle);
+			new_subtitle.appendChild(new_subtitle_text);
+			new_subtitle.setAttribute("class","list-group-item-text");
+			new_info_frame.appendChild(new_subtitle);
+		//isbn:
+			var new_isbn = document.createElement("p");
+			var new_isbn_text = document.createTextNode(book.isbn);
+			new_isbn.appendChild(new_isbn_text);
+			new_isbn.setAttribute("class","list-group-item-text");
+			new_info_frame.appendChild(new_isbn);
+		new_entry.appendChild(new_info_frame);
+	new_entry.setAttribute("style","overflow:auto;");
 	new_entry.setAttribute("class","list-group-item");
 	new_entry.setAttribute("href",'/prices?isbn=' + book.isbn);
 	document.getElementById("result-list").appendChild(new_entry);
