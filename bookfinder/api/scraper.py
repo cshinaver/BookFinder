@@ -118,12 +118,14 @@ def get_amazon_books_for_keyword(keyword):
         if not price_tag:
             return
 
-        new_book.price = price_tag.get_text()
+        book_price = re.search(r"\$(.*)", price_tag.get_text()).group(1)
+        new_book.price = Decimal(book_price)
         link = item.attrs['href']
         # Amazon links have weird &amp; in them which breaks them
         # Remove anything after the first & arg
         new_book.link = link[:link.find('&')]
         new_book.title = title
+        new_book.seller = 'Amazon'
 
         # determine if is rental
         rent_or_buy_item = item.find(
@@ -197,6 +199,8 @@ def get_Barnes_book_prices_for_isbn(keyword):
         list_wrapper_item = soup.find('section', id='prodSummary')
         product_info = list_wrapper_item.find('li', class_='tab selected')
 
+        if product_info is None:
+            return []
         item_url_extension = (product_info.find_all('a')[0]).attrs['href']
         item_base = "http://www.barnesandnoble.com"
         item_url = item_base+item_url_extension
@@ -206,8 +210,9 @@ def get_Barnes_book_prices_for_isbn(keyword):
         new_PurchaseOption.purchaseID = ''
 
         item_price = product_info.find_all('a')[1]  # get price
-        item_price_text = item_price.get_text()
-        new_PurchaseOption.price = Decimal(item_price_text[2:-1])
+        item_price_text = re.search(r"\$(.*)", item_price.get_text()).group(1)
+        print item_price_text
+        new_PurchaseOption.price = Decimal(item_price_text)
 
         item_type = product_info.find_all('a')[0]  # get book type
         new_PurchaseOption.book_type = item_type.get_text()
