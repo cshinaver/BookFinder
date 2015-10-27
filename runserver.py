@@ -1,4 +1,4 @@
 from bookfinder import app
 
 # Run in debug mode
-app.run(debug=True)
+app.run(host='0.0.0.0', debug=True)
