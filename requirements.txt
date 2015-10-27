@@ -1,5 +1,6 @@
 decorator==4.0.2
 Flask==0.10.1
+Flask-Login==0.3.2
 gunicorn==19.3.0
 ipdb==0.8.1
 ipython==4.0.0
