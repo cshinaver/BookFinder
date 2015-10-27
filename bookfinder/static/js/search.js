@@ -51,6 +51,6 @@ function add_book_to_list(book) {
 		new_entry.appendChild(new_info_frame);
 	new_entry.setAttribute("style","overflow:auto;");
 	new_entry.setAttribute("class","list-group-item");
-	new_entry.setAttribute("href",'/prices?isbn=' + book.isbn);
+	new_entry.setAttribute("href",'/search/prices?isbn=' + book.isbn);
 	document.getElementById("result-list").appendChild(new_entry);
 }

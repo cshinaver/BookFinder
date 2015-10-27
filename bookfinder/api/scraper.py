@@ -49,21 +49,23 @@ class PurchaseOption:
             )
         )
 
-
-def PurchaseOption_to_dict(option):
-    return {
-        'seller': option.seller,
-        'price': option.price,
-        'rental': option.rental,
-        'book_type': option.book_type,
-        'link': option.link,
-        'purchaseID': option.purchaseID
-        }
+    def to_dict(self):
+        return {
+            'seller': self.seller,
+            'price': float(self.price),
+            'rental': self.is_rental,
+            'book_type': self.book_type,
+            'link': self.link,
+            'purchaseID': self.purchaseID
+            }
 
 
 class Book:
     def __init__(self, *args, **kwargs):
         self.title = ''
+        self.subtitle = ''
+        self.isbn = ''
+        self.thumbnail_link = ''
 
     def __repr__(self):
         return (
@@ -78,13 +80,12 @@ class Book:
             )
         )
 
-
-def Book_to_dict(book):
-    return {
-        'Title': book.title,
-        'Subtitle': book.subtitle,
-        'isbn': book.isbn,
-        'Thumbnail_link': book.thumbnail_link
+    def to_dict(self):
+        return {
+            'Title': self.title,
+            'Subtitle': self.subtitle,
+            'isbn': self.isbn,
+            'Thumbnail_link': self.thumbnail_link
         }
 
 
@@ -215,6 +216,8 @@ def get_Barnes_book_prices_for_isbn(keyword):
         list_books.append(new_PurchaseOption)  # add purchased booko
 
         new_rental = soup.find('section', id='skuSelection')
+        if new_rental is None:
+            return []
         if(new_rental.find('p', class_='price rental-price')):
             new_rental_option = PurchaseOption()
             new_rental_option.link = item_url
@@ -240,6 +243,7 @@ def get_Barnes_book_prices_for_isbn(keyword):
                 keyword=keyword,
             )
         )
+        return []
 
 
 def get_google_books_for_isbn(isbn):
@@ -262,6 +266,8 @@ def get_google_books_for_isbn(isbn):
         content = get_google_books_search_page_for_isbn(isbn)
         soup = BeautifulSoup(content)
         item = soup.find('li', class_='g')
+        if item is None:
+            return None
         link = extract_google_books_page_link_from_li(item)
         return link
 
@@ -403,6 +409,13 @@ def get_google_books_for_isbn(isbn):
         return option_list
 
     link = get_google_books_page_link_for_isbn(isbn)
+    if link is None:
+        print ("No results found at "
+            "'http://books.google.com' for '{isbn}'".format(
+                isbn=isbn,
+            )
+        )
+        return []
     return extract_google_books_prices_from_page_link(link)
 
 
@@ -479,8 +492,10 @@ def get_book_object_list_for_book_title(title):
     response = requests.get(url).json()
 
     books = []
+    if 'items' not in response.keys():
+        return []
     for this_item in response['items']:
         book = get_book_info_from_book_item(this_item)
-        if book!=None:
+        if book is not None:
             books.append(book)
     return books
