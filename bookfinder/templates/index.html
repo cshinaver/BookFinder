@@ -1,7 +1,17 @@
-<html>
-    <head>
-    </head>
-    <body>
-        <h1> Welcome to our initial html page for the BookFinder project</h1>
-    </body>
-</html>
+{% extends "block.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+	<div id="page-body" class="container">
+		<form role="search" action="/search/">
+			<div class="form-group">
+				<label class="control-label">Book Search</label>
+				<div class="input-group">
+					<input id="main-search-bar_text" class="form-control" type="text" name="title" placeholder="Title">
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="submit">Search</button>
+					</span>
+				</div>
+			</div>
+		</form>
+	</div>
+{% endblock %}
