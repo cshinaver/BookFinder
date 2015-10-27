@@ -3,6 +3,7 @@ import os
 
 class Config(object):
     DEBUG = False
+    DATABASE_USERNAME = "postgres"
 
 
 class ProductionConfig(Config):
@@ -13,3 +14,5 @@ class ProductionConfig(Config):
 class DevelopmentConfig(Config):
     # PostgreSQL configuration
     DATABASE_URL = "localhost"
+    DATABASE_PASSWORD = "test"
+    DATABASE_NAME = "test"
