@@ -50,25 +50,40 @@ def comparison_option_query():
     amazon_list = get_amazon_books_for_keyword(isbn)
     if amazon_list is None:
         print 'None returned from get_amazon_books_for_keyword'
-    elif len(amazon_list)==0:
-        print 'get_amazon_books_for_keyword returned no results'
     else:
+        print (
+            "   get_amazon_books_for_keyword('{isbn}')"
+            " returned {count} result(s)".format(
+                isbn=isbn,
+                count=len(amazon_list)
+            )
+        )
         for option in amazon_list:
             option_list.append(option.to_dict())
     barnes_list = get_Barnes_book_prices_for_isbn(isbn)
     if barnes_list is None:
         print 'None returned from get_Barnes_book_prices_for_isbn'
-    elif len(barnes_list)==0:
-        print 'get_Barnes_book_prices_for_isbn returned no results'
     else:
+        print (
+            "get_Barnes_book_prices_for_isbn('{isbn}')"
+            " returned {count} result(s)".format(
+                isbn=isbn,
+                count=len(barnes_list)
+            )
+        )
         for option in barnes_list:
             option_list.append(option.to_dict())
     google_list = get_google_books_for_isbn(isbn)
     if google_list is None:
         print 'None returned from get_google_books_for_isbn'
-    elif len(google_list)==0:
-        print 'get_google_books_for_isbn returned no results'
     else:
+        print (
+            "      get_google_books_for_isbn('{isbn}')"
+            " returned {count} result(s)".format(
+                isbn=isbn,
+                count=len(google_list)
+            )
+        )
         for option in google_list:
             option_list.append(option.to_dict())
     json_output = json.dumps(option_list, sort_keys=True, indent=4)

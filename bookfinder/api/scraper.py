@@ -189,7 +189,7 @@ def get_Barnes_book_prices_for_isbn(keyword):
         return requests.get(search_string).content
 
     content = get_page_for_Barnes_book_search(keyword)
-    soup = BeautifulSoup(content)
+    soup = BeautifulSoup(content, 'html.parser')
     soup.find('div', class_='header')
     list_books = []
     if soup.find('section', id='prodSummary'):
@@ -206,7 +206,8 @@ def get_Barnes_book_prices_for_isbn(keyword):
         new_PurchaseOption.purchaseID = ''
 
         item_price = product_info.find_all('a')[1]  # get price
-        new_PurchaseOption.price = item_price.get_text()
+        item_price_text = item_price.get_text()
+        new_PurchaseOption.price = Decimal(item_price_text[2:-1])
 
         item_type = product_info.find_all('a')[0]  # get book type
         new_PurchaseOption.book_type = item_type.get_text()
@@ -264,7 +265,7 @@ def get_google_books_for_isbn(isbn):
             return a_item.attrs['href']
 
         content = get_google_books_search_page_for_isbn(isbn)
-        soup = BeautifulSoup(content)
+        soup = BeautifulSoup(content, 'html.parser')
         item = soup.find('li', class_='g')
         if item is None:
             return None
@@ -290,7 +291,7 @@ def get_google_books_for_isbn(isbn):
                 'https://www.google.com/url?rct=j&url=' + redir_sub
             )
             content = requests.get(full_redir_link).content
-            soup = BeautifulSoup(content)
+            soup = BeautifulSoup(content, 'html.parser')
             body = soup.find('body')
             # if has no body,
             # is probably actually a redirect page - grab the redirect link
@@ -308,7 +309,7 @@ def get_google_books_for_isbn(isbn):
 
         def extract_google_books_price_list_from_link(link):
             content = requests.get(link).content
-            soup = BeautifulSoup(content)
+            soup = BeautifulSoup(content, 'html.parser')
             center = soup.find('div', id='volume-center')
             list_area = center.find('div', class_='about_content')
             list_items = list_area.find_all('tr')
@@ -350,7 +351,7 @@ def get_google_books_for_isbn(isbn):
             return extract_google_books_price_list_from_link(link)
 
         content = requests.get(link).content
-        soup = BeautifulSoup(content)
+        soup = BeautifulSoup(content, 'html.parser')
         get_button = soup.find('a', id='gb-get-book-content')
         button_text = get_button.text
         button_link = get_button.attrs['href']
