@@ -12,6 +12,7 @@ class ProductionConfig(Config):
 
 
 class DevelopmentConfig(Config):
+    DEBUG = True
     # PostgreSQL configuration
     DATABASE_URL = "localhost"
     DATABASE_PASSWORD = "test"
