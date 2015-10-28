@@ -32,11 +32,13 @@ def flush_db():
     '''
     postgres_tables = execute_sql_query(
         '''
-        select tablename from pg_tables where tableowner='postgres'
-        '''
+        select tablename from pg_tables where tableowner='{db_user}'
+        '''.format(db_user=app.config['DATABASE_USERNAME'])
     )
     drop_table_sql = 'drop table '
-    app.logger.debug('Dropping all tables owned by postgres user...')
+    app.logger.debug('Dropping all tables owned by {db_user} user...'.format(
+        db_user=app.config['DATABASE_USERNAME'],
+    ))
     # append table names owned by postgres
     if postgres_tables:
         drop_table_sql += ','.join([t[0] for t in postgres_tables])
@@ -45,7 +47,11 @@ def flush_db():
             'Tables {tables} dropped'.format(tables=str(postgres_tables))
         )
     else:
-        app.logger.debug('No tables owned by postgres user exist in database')
+        app.logger.debug(
+            'No tables owned by {db_user} user exist in database'.format(
+                db_user=app.config['DATABASE_USERNAME'],
+            )
+        )
 
 
 def execute_sql_query(query):
