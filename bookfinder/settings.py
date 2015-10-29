@@ -17,3 +17,4 @@ class DevelopmentConfig(Config):
     DATABASE_URL = "localhost"
     DATABASE_PASSWORD = "test"
     DATABASE_NAME = "test"
+    DATABASE_PORT = 5432

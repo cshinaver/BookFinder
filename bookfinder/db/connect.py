@@ -10,6 +10,7 @@ def connect_db():
         user=app.config['DATABASE_USERNAME'],
         password=app.config['DATABASE_PASSWORD'],
         host=app.config['DATABASE_URL'],
+        port=app.config['DATABASE_PORT'],
     )
 
 
