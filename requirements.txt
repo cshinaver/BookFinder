@@ -1,5 +1,6 @@
 decorator==4.0.2
 Flask==0.10.1
+Flask-Script==2.0.5
 gunicorn==19.3.0
 ipdb==0.8.1
 ipython==4.0.0
@@ -10,6 +11,7 @@ MarkupSafe==0.23
 path.py==8.1.1
 pexpect==3.3
 pickleshare==0.5
+psycopg2==2.6.1
 requests==2.6.2
 beautifulsoup4==4.4.0
 simplegeneric==0.8.1
