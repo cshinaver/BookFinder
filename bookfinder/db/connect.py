@@ -1,5 +1,6 @@
 from contextlib import closing
 import psycopg2
+import psycopg2.extras
 
 from bookfinder import app
 
@@ -85,7 +86,7 @@ def flush_db():
 def execute_sql_query(query):
     results = []
     with closing(connect_db()) as db:
-        cursor = db.cursor()
+        cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cursor.execute(query)
         try:
             results = cursor.fetchall()
