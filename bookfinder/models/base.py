@@ -25,26 +25,24 @@ class BaseModel:
         ]
 
     @classmethod
-    def _tuple_to_obj(cls, t, properties):
+    def _tuple_to_obj(cls, t):
         instance = cls()
-        for i in xrange(0, len(t)):
-            setattr(instance, properties[i], t[i])
+        properties = cls.get_properties()
+        for prop in properties:
+            setattr(instance, prop, t[str(prop)])
         return instance
 
     @classmethod
-    def get(cls, obj_id):
-        properties = cls.get_properties()
-        properties_str = ','.join(properties)
+    def get(cls, id):
         query = (
             '''
-                select ({properties})
+                select *
                 from {table_name}
                 where id={id}
             '''.format(
-                properties=properties_str,
                 table_name=cls.__name__,
-                id=obj_id,
+                id=id,
             )
         )
         t = execute_sql_query(query)
-        return cls._tuple_to_obj(t[0], properties)
+        return cls._tuple_to_obj(t[0])
