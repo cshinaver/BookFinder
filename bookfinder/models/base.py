@@ -30,7 +30,9 @@ class BaseModel:
         instance = cls()
         properties = cls.get_properties()
         for prop in properties:
-            setattr(instance, prop, t[str(prop)])
+            # Postgresql ignores case, so returns all lowercase
+            value = t[str(prop).lower()]
+            setattr(instance, prop, value)
         return instance
 
     @classmethod
