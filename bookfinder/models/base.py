@@ -36,6 +36,21 @@ class BaseModel:
         return instance
 
     @classmethod
+    def delete(cls, obj):
+        table_name = cls.__name__
+        query = (
+            '''
+                delete from {table_name}
+                where id = {id}
+            '''.format(
+                table_name=table_name,
+                id=obj.id,
+            )
+        )
+        execute_sql_query(query)
+        obj.id = None
+
+    @classmethod
     def get(cls, id):
         query = (
             '''
