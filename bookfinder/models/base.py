@@ -14,6 +14,18 @@ class BaseModel:
         return repr_str
 
     @classmethod
+    def all(cls):
+        table = cls.__name__
+        query = (
+            '''
+                select *
+                from {table}
+            '''.format(table=table)
+        )
+        results = execute_sql_query(query)
+        return [cls._tuple_to_obj(t) for t in results]
+
+    @classmethod
     def get_properties(cls):
         # Somewhat hacky trick to get all class properties
         return [
