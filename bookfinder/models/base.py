@@ -75,7 +75,11 @@ class BaseModel:
             )
         )
         t = execute_sql_query(query)
-        return cls._tuple_to_obj(t[0])
+        try:
+            result = cls._tuple_to_obj(t[0])
+        except IndexError:
+            result = None
+        return result
 
     def save(self):
         def _save_as_new_object():
