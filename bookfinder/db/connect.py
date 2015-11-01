@@ -1,5 +1,6 @@
 from contextlib import closing
 import psycopg2
+import psycopg2.extras
 
 from bookfinder import app
 
@@ -18,12 +19,35 @@ def init_db():
     app.logger.debug('Creating initial schema...')
     create_schema_sql = (
         '''
-            create table book(name varchar(30), level int)
+            create table Book(
+                id int primary key,
+                title varchar(50),
+                ISBN varchar(13),
+                author varchar(100)
+            );
+            create table PurchaseChoice(
+                id int primary key,
+                price varchar(10),
+                type varchar(20),
+                isRental boolean,
+                link varchar(100),
+                seller varchar(30),
+                book_id int,
+                foreign key (book_id) references Book(id)
+            );
+            create table BookfinderUser(
+                id int primary key,
+                username varchar(20),
+                email varchar(50),
+                password varchar(50)
+            );
         '''
     )
 
     execute_sql_query(create_schema_sql)
-    app.logger.debug('Table "book" created')
+    app.logger.debug('Table "Book" created')
+    app.logger.debug('Table "PurchaseChoice" created')
+    app.logger.debug('Table "BookfinderUser" created')
 
 
 def flush_db():
@@ -58,7 +82,7 @@ def flush_db():
 def execute_sql_query(query):
     results = []
     with closing(connect_db()) as db:
-        cursor = db.cursor()
+        cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cursor.execute(query)
         try:
             results = cursor.fetchall()

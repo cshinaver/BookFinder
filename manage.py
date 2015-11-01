@@ -4,13 +4,21 @@ from flask.ext.script import Manager, Shell
 
 from bookfinder import app
 from bookfinder.db import connect
+from bookfinder.models.book import Book
+from bookfinder.models.purchasechoice import PurchaseChoice
 
 manager = Manager(app)
 
 
 # Shell command
 def _make_context():
-    return dict(app=app, connect=connect)
+    return dict(
+        app=app,
+        connect=connect,
+        Book=Book,
+        PurchaseChoice=PurchaseChoice,
+    )
+
 manager.add_command("shell", Shell(make_context=_make_context))
 
 
