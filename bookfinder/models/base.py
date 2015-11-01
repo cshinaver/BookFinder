@@ -4,13 +4,14 @@ from bookfinder.db.connect import execute_sql_query
 class BaseModel:
     def __repr__(self):
         properties = self.get_properties()
-        repr_str = '{cls}\n'.format(cls=self.__class__.__name__)
+        repr_str = '<{cls} '.format(cls=self.__class__.__name__)
         for p in properties:
             value = getattr(self, p)
-            repr_str += '{p}: {value}\n'.format(
+            repr_str += '{p}: {value}, '.format(
                 p=p,
                 value=value,
             )
+        repr_str += '>'
         return repr_str
 
     @classmethod
@@ -29,8 +30,25 @@ class BaseModel:
         instance = cls()
         properties = cls.get_properties()
         for prop in properties:
-            setattr(instance, prop, t[str(prop)])
+            # Postgresql ignores case, so returns all lowercase
+            value = t[str(prop).lower()]
+            setattr(instance, prop, value)
         return instance
+
+    @classmethod
+    def delete(cls, obj):
+        table_name = cls.__name__
+        query = (
+            '''
+                delete from {table_name}
+                where id = {id}
+            '''.format(
+                table_name=table_name,
+                id=obj.id,
+            )
+        )
+        execute_sql_query(query)
+        obj.id = None
 
     @classmethod
     def get(cls, id):
