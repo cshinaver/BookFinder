@@ -254,6 +254,9 @@ def get_book_object_for_book_title(title):
     response = requests.get(url).json()
 
     # For now, just pull top item. Might change later
+    if not 'items' in response:
+        return -1
+
     top_item = response['items'][0]
     book = get_book_info_from_book_item(top_item)
     return book

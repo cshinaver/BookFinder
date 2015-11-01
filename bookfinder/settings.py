@@ -4,7 +4,8 @@ import os
 class Config(object):
     DEBUG = False
     DATABASE_USERNAME = "postgres"
-
+    WTF_CSRF_ENABLED = True
+    SECRET_KEY = 'you-will-never-guess'
 
 class ProductionConfig(Config):
     # PostgreSQL configuration
@@ -18,3 +19,4 @@ class DevelopmentConfig(Config):
     DATABASE_PASSWORD = "test"
     DATABASE_NAME = "test"
     DATABASE_PORT = 5432
+
