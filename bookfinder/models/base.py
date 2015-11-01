@@ -57,6 +57,8 @@ class BaseModel:
                 value = getattr(self, prop)
                 if isinstance(value, basestring):
                     values.append("'{value}'".format(value=value))
+                elif not value:
+                    values.append('NULL')
                 else:
                     values.append('{value}'.format(value=value))
             query = (
@@ -84,6 +86,8 @@ class BaseModel:
                 value = getattr(self, prop)
                 if isinstance(value, basestring):
                     value = "'{value}'".format(value=value)
+                elif not value:
+                    value = 'NULL'
                 else:
                     value = "{value}".format(value=value)
                 kv_pairs.append(
