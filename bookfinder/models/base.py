@@ -46,3 +46,30 @@ class BaseModel:
         )
         t = execute_sql_query(query)
         return cls._tuple_to_obj(t[0])
+
+    def save(self):
+        class_name = self.__class__.__name__
+        properties = self.get_properties()
+        properties = [p for p in properties if p != 'id']
+        values = []
+        for prop in properties:
+            value = getattr(self, prop)
+            if isinstance(value, basestring):
+                values.append("'{value}'".format(value=value))
+            else:
+                values.append('{value}'.format(value=value))
+        query = (
+            '''
+                insert into {table_name}
+                ({properties})
+                values
+                ({values})
+                returning id
+            '''.format(
+                table_name=class_name,
+                properties=','.join(properties),
+                values=','.join(values),
+            )
+        )
+        id = execute_sql_query(query)[0][0]
+        self.id = id
