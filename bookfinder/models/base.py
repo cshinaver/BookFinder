@@ -48,28 +48,68 @@ class BaseModel:
         return cls._tuple_to_obj(t[0])
 
     def save(self):
-        class_name = self.__class__.__name__
-        properties = self.get_properties()
-        properties = [p for p in properties if p != 'id']
-        values = []
-        for prop in properties:
-            value = getattr(self, prop)
-            if isinstance(value, basestring):
-                values.append("'{value}'".format(value=value))
-            else:
-                values.append('{value}'.format(value=value))
-        query = (
-            '''
-                insert into {table_name}
-                ({properties})
-                values
-                ({values})
-                returning id
-            '''.format(
-                table_name=class_name,
-                properties=','.join(properties),
-                values=','.join(values),
+        def _save_as_new_object():
+            class_name = self.__class__.__name__
+            properties = self.get_properties()
+            properties = [p for p in properties if p != 'id']
+            values = []
+            for prop in properties:
+                value = getattr(self, prop)
+                if isinstance(value, basestring):
+                    values.append("'{value}'".format(value=value))
+                else:
+                    values.append('{value}'.format(value=value))
+            query = (
+                '''
+                    insert into {table_name}
+                    ({properties})
+                    values
+                    ({values})
+                    returning id
+                '''.format(
+                    table_name=class_name,
+                    properties=','.join(properties),
+                    values=','.join(values),
+                )
             )
-        )
-        id = execute_sql_query(query)[0][0]
-        self.id = id
+            id = execute_sql_query(query)[0][0]
+            self.id = id
+
+        def _save_as_existing_object():
+            class_name = self.__class__.__name__
+            properties = self.get_properties()
+            properties = [p for p in properties if p != 'id']
+            kv_pairs = []
+            for prop in properties:
+                value = getattr(self, prop)
+                if isinstance(value, basestring):
+                    value = "'{value}'".format(value=value)
+                else:
+                    value = "{value}".format(value=value)
+                kv_pairs.append(
+                    '{key} = {value}'.format(
+                        key=prop,
+                        value=value,
+                    )
+                )
+
+            query = (
+                '''
+                    update {table_name}
+                    set {kv_pairs}
+                    where id = {id}
+                '''.format(
+                    table_name=class_name,
+                    kv_pairs=','.join(kv_pairs),
+                    id=self.id,
+                )
+            )
+            execute_sql_query(query)
+
+        if hasattr(self, 'id'):
+            if self.id:
+                _save_as_existing_object()
+            else:
+                _save_as_new_object()
+        else:
+            _save_as_new_object()
