@@ -2,6 +2,17 @@ from bookfinder.db.connect import execute_sql_query
 
 
 class BaseModel:
+    def __repr__(self):
+        properties = self.get_properties()
+        repr_str = '{cls}\n'.format(cls=self.__class__.__name__)
+        for p in properties:
+            value = getattr(self, p)
+            repr_str += '{p}: {value}\n'.format(
+                p=p,
+                value=value,
+            )
+        return repr_str
+
     @classmethod
     def get_properties(cls):
         # Somewhat hacky trick to get all class properties
