@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask.ext.login import LoginManager
 
 app = Flask(__name__)
 
@@ -14,6 +15,10 @@ elif settings_type == "production":
     app.config.from_object('bookfinder.settings.ProductionConfig')
 elif not settings_type:
     app.config.from_object('bookfinder.settings.DevelopmentConfig')
+
+# Login Manager
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 
 import bookfinder.views  # noqa
