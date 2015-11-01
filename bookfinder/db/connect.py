@@ -56,7 +56,11 @@ def flush_db():
     '''
     postgres_tables = execute_sql_query(
         '''
-        select tablename from pg_tables where tableowner='{db_user}'
+        select tablename 
+        from pg_tables 
+        where tableowner='{db_user}' 
+            and tablename NOT LIKE 'pg_%' 
+            and tablename NOT LIKE 'sql_%'
         '''.format(db_user=app.config['DATABASE_USERNAME'])
     )
     drop_table_sql = 'drop table '
