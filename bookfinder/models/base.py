@@ -4,13 +4,14 @@ from bookfinder.db.connect import execute_sql_query
 class BaseModel:
     def __repr__(self):
         properties = self.get_properties()
-        repr_str = '{cls}\n'.format(cls=self.__class__.__name__)
+        repr_str = '<{cls} '.format(cls=self.__class__.__name__)
         for p in properties:
             value = getattr(self, p)
-            repr_str += '{p}: {value}\n'.format(
+            repr_str += '{p}: {value}, '.format(
                 p=p,
                 value=value,
             )
+        repr_str += '>'
         return repr_str
 
     @classmethod
