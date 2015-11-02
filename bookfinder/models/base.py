@@ -22,7 +22,7 @@ class BaseModel:
             if not callable(
                 getattr(cls, i)
             )
-            and '_' not in i
+            and '__' not in i
         ]
 
     @classmethod
