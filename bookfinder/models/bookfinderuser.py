@@ -34,4 +34,4 @@ class BookfinderUser(BaseModel, UserMixin):
 
 @login_manager.user_loader
 def load_user(user_id):
-    return BookfinderUser.get(user_id)
+    return BookfinderUser.get(id=user_id)
