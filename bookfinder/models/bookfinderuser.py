@@ -1,4 +1,8 @@
 from flask.ext.login import UserMixin
+from werkzeug.security import (
+    check_password_hash,
+    generate_password_hash,
+)
 
 from bookfinder import login_manager
 from bookfinder.models.base import BaseModel
@@ -20,6 +24,12 @@ class BookfinderUser(BaseModel, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.pw_hash, password)
+
+    def save(self):
+        if not self.pw_hash or not self.username:
+            raise AttributeError("User must have username and password")
+        else:
+            super(BookfinderUser, self).save()
 
 
 @login_manager.user_loader
