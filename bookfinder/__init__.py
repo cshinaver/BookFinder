@@ -4,6 +4,7 @@ from flask import Flask
 from flask.ext.login import LoginManager
 
 app = Flask(__name__)
+app.secret_key = 'super secret key'
 
 # Config
 # BOOKFINDER_SETTINGS must be set to development or production
