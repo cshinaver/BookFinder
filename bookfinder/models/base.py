@@ -51,19 +51,41 @@ class BaseModel:
         obj.id = None
 
     @classmethod
-    def get(cls, id):
+    def get(cls, **kwargs):
         query = (
             '''
                 select *
                 from {table_name}
-                where id={id}
+                where
             '''.format(
                 table_name=cls.__name__,
-                id=id,
             )
         )
+        if kwargs:
+            where_args = {}
+            for k, v in kwargs.iteritems():
+                if isinstance(v, basestring):
+                    v = "'{v}'".format(v=v)
+                else:
+                    v = str(v)
+                where_args[k] = v
+            where_str = ' and '.join(
+                "{k}={v}".format(
+                    k=k,
+                    v=v,
+                )
+                for (k, v) in where_args.iteritems())
+            query += where_str
+
         t = execute_sql_query(query)
-        return cls._tuple_to_obj(t[0])
+        n_tuples = len(t)
+        if n_tuples == 0:
+            result = None
+        elif n_tuples == 1:
+            result = cls._tuple_to_obj(t[0])
+        else:
+            result = [cls._tuple_to_obj(o) for o in t]
+        return result
 
     def save(self):
         def _save_as_new_object():
