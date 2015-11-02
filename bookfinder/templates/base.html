@@ -35,13 +35,16 @@
 					</div>
 					<div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1">
 						<ol class="nav navbar-nav navbar-right">
+                            {% if current_user.is_authenticated %}
+                            <li>
+                                <a id="navbar-brand">{{ current_user.username }}</a>
+                            </li>
+                            {% endif %}
                             <li>
                                 {% if current_user.is_authenticated %}
-                                    Hi {{ current_user.name }}!
+                                    <a id="navbar-brand" href="/logout">Sign Out</a>
                                 {% else %}
-                                    <a class="dropdown-toggle" role="button" aria-expanded="false" href="#" data-toggle="dropdown">
-                                        <span id="sign-in-name">Sign In</span></span>
-                                    </a>
+                                    <a href='/login' id="navbar-brand">Sign In</a>
                                 {% endif %}
                             </li>
 						</ol>
