@@ -39,7 +39,7 @@ def init_db():
                 id serial primary key,
                 username varchar(20) unique,
                 email varchar(50),
-                password varchar(50)
+                pw_hash varchar(160)
             );
         '''
     )
