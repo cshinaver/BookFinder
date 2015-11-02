@@ -97,6 +97,7 @@ def comparison_option_query():
 
 
 # DEBUG - add book
+# example address: http://localhost:5000/api/debug/add_book/?title=Book_title&isbn=1625847602&author=test_author
 @app.route('/api/debug/add_book/')
 def add_book():
     new_book = Book()
@@ -108,6 +109,7 @@ def add_book():
 #/DEBUG - add book
 
 # DEBUG - add purchase option
+# example address: http://localhost:5000/api/debug/add_purchase_option/?price=12.34&type=print&isRental=true&link=http://www.google.com&seller=test_seller_2&book_id=3
 @app.route('/api/debug/add_purchase_option/')
 def add_purchase_option():
     new_option = PurchaseChoice()
