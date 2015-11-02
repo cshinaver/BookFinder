@@ -6,6 +6,7 @@ from bookfinder import app
 from bookfinder.db import connect
 from bookfinder.models.book import Book
 from bookfinder.models.purchasechoice import PurchaseChoice
+from bookfinder.models.bookfinderuser import BookfinderUser as User
 
 manager = Manager(app)
 
@@ -17,6 +18,7 @@ def _make_context():
         connect=connect,
         Book=Book,
         PurchaseChoice=PurchaseChoice,
+        User=User,
     )
 
 manager.add_command("shell", Shell(make_context=_make_context))
