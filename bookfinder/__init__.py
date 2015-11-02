@@ -3,6 +3,7 @@ import os
 from flask import Flask
 
 app = Flask(__name__)
+
 # Config
 # BOOKFINDER_SETTINGS must be set to development or production
 settings_type = os.environ.get('BOOKFINDER_SETTINGS', None)
