@@ -20,13 +20,13 @@ def init_db():
     create_schema_sql = (
         '''
             create table Book(
-                id int primary key,
+                id serial primary key,
                 title varchar(50),
                 ISBN varchar(13),
                 author varchar(100)
             );
             create table PurchaseChoice(
-                id int primary key,
+                id serial primary key,
                 price varchar(10),
                 type varchar(20),
                 isRental boolean,
@@ -36,7 +36,7 @@ def init_db():
                 foreign key (book_id) references Book(id)
             );
             create table BookfinderUser(
-                id int primary key,
+                id serial primary key,
                 username varchar(20),
                 email varchar(50),
                 password varchar(50)
@@ -57,7 +57,12 @@ def flush_db():
     '''
     postgres_tables = execute_sql_query(
         '''
-        select tablename from pg_tables where tableowner='{db_user}'
+        select tablename 
+        from pg_tables 
+        where 
+            tableowner='{db_user}' 
+            and tablename NOT LIKE 'pg_%' 
+            and tablename NOT LIKE 'sql_%'
         '''.format(db_user=app.config['DATABASE_USERNAME'])
     )
     drop_table_sql = 'drop table '
