@@ -42,11 +42,12 @@ def home():
 				p = PurchaseChoice()
 				p.book_id = b.id
 				p.price = Price
-				type = Hardcover
+				type = 'Hardcover'
 				isRental = False
 				link = ''		#change to valid link
 				seller = 'Foo Bar Seller' #change to user once login is created
 				p.save()
+
 				return redirect('')
 			else:	# book is not valid
 				error('ISBN is no good')
