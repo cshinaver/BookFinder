@@ -22,7 +22,7 @@ def init_db():
             create table Book(
                 id serial primary key,
                 title varchar(50),
-                ISBN varchar(13),
+                ISBN varchar(13) unique,
                 author varchar(100)
             );
             create table PurchaseChoice(
@@ -37,9 +37,9 @@ def init_db():
             );
             create table BookfinderUser(
                 id serial primary key,
-                username varchar(20),
+                username varchar(20) unique,
                 email varchar(50),
-                password varchar(50)
+                pw_hash varchar(160)
             );
         '''
     )
@@ -57,11 +57,11 @@ def flush_db():
     '''
     postgres_tables = execute_sql_query(
         '''
-        select tablename 
-        from pg_tables 
-        where 
-            tableowner='{db_user}' 
-            and tablename NOT LIKE 'pg_%' 
+        select tablename
+        from pg_tables
+        where
+            tableowner='{db_user}'
+            and tablename NOT LIKE 'pg_%'
             and tablename NOT LIKE 'sql_%'
         '''.format(db_user=app.config['DATABASE_USERNAME'])
     )
