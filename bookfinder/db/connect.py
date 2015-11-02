@@ -37,7 +37,7 @@ def init_db():
             );
             create table BookfinderUser(
                 id serial primary key,
-                username varchar(20),
+                username varchar(20) unique,
                 email varchar(50),
                 password varchar(50)
             );
