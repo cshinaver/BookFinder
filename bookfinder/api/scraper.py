@@ -49,10 +49,23 @@ class PurchaseOption:
             )
         )
 
+    def to_dict(self):
+        return {
+            'seller': self.seller,
+            'price': float(self.price),
+            'rental': self.is_rental,
+            'book_type': self.book_type,
+            'link': self.link,
+            'purchaseID': self.purchaseID
+        }
+
 
 class Book:
     def __init__(self, *args, **kwargs):
         self.title = ''
+        self.subtitle = ''
+        self.isbn = ''
+        self.thumbnail_link = ''
 
     def __repr__(self):
         return (
@@ -66,6 +79,14 @@ class Book:
                 thumbnail_link=self.thumbnail_link,
             )
         )
+
+    def to_dict(self):
+        return {
+            'Title': self.title,
+            'Subtitle': self.subtitle,
+            'isbn': self.isbn,
+            'Thumbnail_link': self.thumbnail_link
+        }
 
 
 def get_page_for_amazon_book_search(keyword):
@@ -97,12 +118,14 @@ def get_amazon_books_for_keyword(keyword):
         if not price_tag:
             return
 
-        new_book.price = price_tag.get_text()
+        book_price = re.search(r"\$(.*)", price_tag.get_text()).group(1)
+        new_book.price = Decimal(book_price)
         link = item.attrs['href']
         # Amazon links have weird &amp; in them which breaks them
         # Remove anything after the first & arg
         new_book.link = link[:link.find('&')]
         new_book.title = title
+        new_book.seller = 'Amazon'
 
         # determine if is rental
         rent_or_buy_item = item.find(
@@ -168,14 +191,16 @@ def get_Barnes_book_prices_for_isbn(keyword):
         return requests.get(search_string).content
 
     content = get_page_for_Barnes_book_search(keyword)
-    soup = BeautifulSoup(content)
+    soup = BeautifulSoup(content, 'html.parser')
     soup.find('div', class_='header')
     list_books = []
     if soup.find('section', id='prodSummary'):
         new_PurchaseOption = PurchaseOption()
         list_wrapper_item = soup.find('section', id='prodSummary')
         product_info = list_wrapper_item.find('li', class_='tab selected')
-
+        if product_info is None:
+            #if no 'li' element, there are no results, so return a blank list
+            return []
         item_url_extension = (product_info.find_all('a')[0]).attrs['href']
         item_base = "http://www.barnesandnoble.com"
         item_url = item_base+item_url_extension
@@ -185,7 +210,8 @@ def get_Barnes_book_prices_for_isbn(keyword):
         new_PurchaseOption.purchaseID = ''
 
         item_price = product_info.find_all('a')[1]  # get price
-        new_PurchaseOption.price = item_price.get_text()
+        item_price_text = re.search(r"\$(.*)", item_price.get_text()).group(1)
+        new_PurchaseOption.price = Decimal(item_price_text)
 
         item_type = product_info.find_all('a')[0]  # get book type
         new_PurchaseOption.book_type = item_type.get_text()
@@ -195,6 +221,9 @@ def get_Barnes_book_prices_for_isbn(keyword):
         list_books.append(new_PurchaseOption)  # add purchased booko
 
         new_rental = soup.find('section', id='skuSelection')
+        if new_rental is None:
+            #this indicates there is no list of rental options, so return the current list
+            return list_books
         if(new_rental.find('p', class_='price rental-price')):
             new_rental_option = PurchaseOption()
             new_rental_option.link = item_url
@@ -214,49 +243,7 @@ def get_Barnes_book_prices_for_isbn(keyword):
 
         return list_books
     else:
-        print (
-            "No results found at "
-            "'http://www.barnesandnoble.com' for '{keyword}'".format(
-                keyword=keyword,
-            )
-        )
-
-
-def get_book_object_for_book_title(title):
-    def get_book_info_from_book_item(item):
-        book = Book()
-        volume_info = top_item['volumeInfo']
-        if not volume_info:
-            return None
-        book.title = volume_info['title']
-        book.subtitle = volume_info.get('subtitle')
-        book.author = volume_info.get('authors')
-        image_links = volume_info.get(
-            'imageLinks'
-        )
-        if image_links:
-            book.thumbnail_link = image_links.get('thumbnail')
-
-        book.isbn = (
-            volume_info['industryIdentifiers'][1]['identifier']
-        )
-        return book
-
-    url = (
-        'https://www.googleapis.com/books/v1'
-        '/volumes?'
-        'q={search_terms}&key={API_KEY}'.format(
-            search_terms=title,
-            API_KEY=GOOGLE_BOOKS_API_KEY,
-        )
-    )
-
-    response = requests.get(url).json()
-
-    # For now, just pull top item. Might change later
-    top_item = response['items'][0]
-    book = get_book_info_from_book_item(top_item)
-    return book
+        return []
 
 
 def get_google_books_for_isbn(isbn):
@@ -277,8 +264,11 @@ def get_google_books_for_isbn(isbn):
             return a_item.attrs['href']
 
         content = get_google_books_search_page_for_isbn(isbn)
-        soup = BeautifulSoup(content)
+        soup = BeautifulSoup(content, 'html.parser')
         item = soup.find('li', class_='g')
+        if item is None:
+            # no list item indicates no results for this isbn
+            return None
         link = extract_google_books_page_link_from_li(item)
         return link
 
@@ -301,7 +291,7 @@ def get_google_books_for_isbn(isbn):
                 'https://www.google.com/url?rct=j&url=' + redir_sub
             )
             content = requests.get(full_redir_link).content
-            soup = BeautifulSoup(content)
+            soup = BeautifulSoup(content, 'html.parser')
             body = soup.find('body')
             # if has no body,
             # is probably actually a redirect page - grab the redirect link
@@ -319,7 +309,7 @@ def get_google_books_for_isbn(isbn):
 
         def extract_google_books_price_list_from_link(link):
             content = requests.get(link).content
-            soup = BeautifulSoup(content)
+            soup = BeautifulSoup(content, 'html.parser')
             center = soup.find('div', id='volume-center')
             list_area = center.find('div', class_='about_content')
             list_items = list_area.find_all('tr')
@@ -361,7 +351,7 @@ def get_google_books_for_isbn(isbn):
             return extract_google_books_price_list_from_link(link)
 
         content = requests.get(link).content
-        soup = BeautifulSoup(content)
+        soup = BeautifulSoup(content, 'html.parser')
         get_button = soup.find('a', id='gb-get-book-content')
         button_text = get_button.text
         button_link = get_button.attrs['href']
@@ -420,4 +410,112 @@ def get_google_books_for_isbn(isbn):
         return option_list
 
     link = get_google_books_page_link_for_isbn(isbn)
+    if link is None:
+        #there are no search results for this isbn, so return blank list
+        return []
     return extract_google_books_prices_from_page_link(link)
+
+
+def get_book_object_for_book_title(title):
+    def get_book_info_from_book_item(item):
+        book = Book()
+        volume_info = item['volumeInfo']
+        if not volume_info:
+            return None
+        book.title = volume_info['title']
+        book.subtitle = volume_info.get('subtitle')
+        book.author = volume_info.get('authors')
+        image_links = volume_info.get(
+            'imageLinks'
+        )
+        if image_links:
+            book.thumbnail_link = image_links.get('thumbnail')
+
+        book.isbn = (
+            volume_info['industryIdentifiers'][1]['identifier']
+        )
+        return book
+
+    url = (
+        'https://www.googleapis.com/books/v1'
+        '/volumes?'
+        'q={search_terms}&key={API_KEY}'.format(
+            search_terms=title,
+            API_KEY=GOOGLE_BOOKS_API_KEY,
+        )
+    )
+
+    response = requests.get(url).json()
+
+    # For now, just pull top item. Might change later
+    top_item = response['items'][0]
+    book = get_book_info_from_book_item(top_item)
+    return book
+
+
+def get_book_object_list_for_book_title(title):
+    def get_book_info_from_book_item(item):
+        book = Book()
+        volume_info = item['volumeInfo']
+        if not volume_info:
+            return None
+        book.title = volume_info['title']
+        book.subtitle = volume_info.get('subtitle')
+        book.author = volume_info.get('authors')
+        image_links = volume_info.get(
+            'imageLinks'
+        )
+        if image_links:
+            book.thumbnail_link = image_links.get('thumbnail')
+
+        if 'industryIdentifiers' not in volume_info:
+            #there is no ISBN specified - return nothing
+            return None
+        identifiers = volume_info['industryIdentifiers']
+        # if there is only 1 identifier, don't use this book option
+        if len(identifiers)==0:
+            #there is no ISBN specified - return nothing
+            return None
+        elif len(identifiers)==1:
+            #there is one ISBN specified
+            book.isbn = (
+                identifiers[0]['identifier']
+            )
+        else:
+            #there are multiple ISBNs specified
+            #get list of all ISBNs to sort through
+            all_isbns = []
+            for identif in identifiers:
+                all_isbns.append(identif['identifier'])
+            #iterate through list of ISBNs to get 13-character version
+            isbn_13_found = False
+            for ISBN in all_isbns:
+                if len(ISBN)==13:
+                    book.isbn = ISBN
+                    isbn_13_found = True
+            #if none found, default to the first element
+            if not isbn_13_found:
+                book.isbn = (
+                    identifiers[0]['identifier']
+                )
+        return book
+
+    url = (
+        'https://www.googleapis.com/books/v1'
+        '/volumes?'
+        'q={search_terms}&key={API_KEY}'.format(
+            search_terms=title,
+            API_KEY=GOOGLE_BOOKS_API_KEY,
+        )
+    )
+
+    response = requests.get(url).json()
+
+    books = []
+    if 'items' not in response.keys():
+        return []
+    for this_item in response['items']:
+        book = get_book_info_from_book_item(this_item)
+        if book is not None:
+            books.append(book)
+    return books
