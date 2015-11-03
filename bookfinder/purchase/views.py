@@ -41,10 +41,10 @@ def home():
                 p = PurchaseChoice()
                 p.book_id = b.id
                 p.price = Price
-                type = 'Hardcover'
-                isRental = False
-                link = '' # change to valid link
-                seller = 'Foo Bar Seller' # change to user once login is created
+                p.type = 'Hardcover'
+                p.isRental = False
+                p.link = '' # change to valid link
+                p.seller = 'Foo Bar Seller' # change to user once login is created
                 p.save()
                 flash('Your book has been logged into the database. Yeah!!!', 'success')
                 return redirect('')
