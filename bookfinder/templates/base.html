@@ -55,17 +55,32 @@
 		{% endblock %}
 		</div>
 		<div id="flash">
-			<div class="alert alert-dismissible alert-danger">
-			{% with messages = get_flashed_messages() %}
-			  {% if messages %}
-			    <ul class=flashes>
-			    {% for message in messages %}
-			      <li>{{ message | safe }}</li>
-			    {% endfor %}
-			    </ul>
-			  {% endif %}
+			{% with errors = get_flashed_messages(category_filter=["error"]) %}
+				{% if errors %}
+					<div class="alert alert-danger">
+					  <a class="close" href="#">×</a>
+					  <ul>
+					    {%- for msg in errors %}
+					    <h4><strong>Error: </strong>{{ msg }}</h4>
+					    {% endfor -%}
+					  </ul>
+					</div>
+				{% endif %}
 			{% endwith %}
-			</div>
+
+			{% with errors = get_flashed_messages(category_filter=["success"]) %}
+				{% if errors %}
+					<div class="alert alert-success">
+					  <a class="close" href="#">×</a>
+					  <ul>
+					    {%- for msg in errors %}
+					    <h4><strong>Success: </strong>{{ msg }}</h4>
+					    {% endfor -%}
+					  </ul>
+					</div>
+				{% endif %}
+			{% endwith %}
+
 		</div>
 		<div id="content">{% block content %}{% endblock %}</div>
 		<div id="footer">

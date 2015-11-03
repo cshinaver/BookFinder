@@ -12,15 +12,14 @@ def home():
     #import ipdb; ipdb.set_trace()
     if request.method == 'POST':
         if request.form['ISBN'] == '':
-            flash("No ISBN entered")
+            flash(u'No ISBN entered', 'error')
         if request.form['Price'] == '':
-            flash("No Price entered")
+            flash(u"No Price entered", "error")
         if request.form['Title'] == '':
-            flash("No Title entered")
+            flash(u"No Title entered", "error")
         if request.form['Author'] == '':
-            flash("No Author entered")
+            flash(u"No Author entered", "error")
         else:
-            flash("Book Submitted")
             # create book object using ISBN and Price
             ISBN = request.form['ISBN']
             Price = request.form['Price']
@@ -47,10 +46,10 @@ def home():
                 link = '' # change to valid link
                 seller = 'Foo Bar Seller' # change to user once login is created
                 p.save()
-
+                flash('Your book has been logged into the database. Yeah!!!', 'success')
                 return redirect('')
             else:  # book is not valid
-                flash('ISBN is invalid')
+                flash('ISBN is invalid', 'error')
     return render_template(  # reference html script
         'purchase/purchase_index.html',
         form=form,
