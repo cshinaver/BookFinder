@@ -57,7 +57,7 @@ class PurchaseOption:
             'book_type': self.book_type,
             'link': self.link,
             'purchaseID': self.purchaseID
-            }
+        }
 
 
 class Book:
@@ -198,8 +198,8 @@ def get_Barnes_book_prices_for_isbn(keyword):
         new_PurchaseOption = PurchaseOption()
         list_wrapper_item = soup.find('section', id='prodSummary')
         product_info = list_wrapper_item.find('li', class_='tab selected')
-
         if product_info is None:
+            #if no 'li' element, there are no results, so return a blank list
             return []
         item_url_extension = (product_info.find_all('a')[0]).attrs['href']
         item_base = "http://www.barnesandnoble.com"
@@ -211,7 +211,6 @@ def get_Barnes_book_prices_for_isbn(keyword):
 
         item_price = product_info.find_all('a')[1]  # get price
         item_price_text = re.search(r"\$(.*)", item_price.get_text()).group(1)
-        print item_price_text
         new_PurchaseOption.price = Decimal(item_price_text)
 
         item_type = product_info.find_all('a')[0]  # get book type
@@ -223,7 +222,8 @@ def get_Barnes_book_prices_for_isbn(keyword):
 
         new_rental = soup.find('section', id='skuSelection')
         if new_rental is None:
-            return []
+            #this indicates there is no list of rental options, so return the current list
+            return list_books
         if(new_rental.find('p', class_='price rental-price')):
             new_rental_option = PurchaseOption()
             new_rental_option.link = item_url
@@ -243,12 +243,6 @@ def get_Barnes_book_prices_for_isbn(keyword):
 
         return list_books
     else:
-        print (
-            "No results found at "
-            "'http://www.barnesandnoble.com' for '{keyword}'".format(
-                keyword=keyword,
-            )
-        )
         return []
 
 
@@ -273,6 +267,7 @@ def get_google_books_for_isbn(isbn):
         soup = BeautifulSoup(content, 'html.parser')
         item = soup.find('li', class_='g')
         if item is None:
+            # no list item indicates no results for this isbn
             return None
         link = extract_google_books_page_link_from_li(item)
         return link
@@ -416,11 +411,7 @@ def get_google_books_for_isbn(isbn):
 
     link = get_google_books_page_link_for_isbn(isbn)
     if link is None:
-        print ("No results found at "
-            "'http://books.google.com' for '{isbn}'".format(
-                isbn=isbn,
-            )
-        )
+        #there are no search results for this isbn, so return blank list
         return []
     return extract_google_books_prices_from_page_link(link)
 
