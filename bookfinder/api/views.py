@@ -29,14 +29,24 @@ def used_option_query():
     def get_list_by_isbn(isbn):
         def fill_list_by_bookid(option_list,book_id):
             def add_to_list(old_list,option):
-                old_list.append({
-                    'seller': option.seller,
-                    'price': option.price,
-                    'rental': option.isRental,
-                    'book_type': option.type,
-                    'link': option.link,
-                    'purchaseID': option.id
-                })
+                if option.isLocalSeller:
+                    old_list.append({
+                        'seller': option.local_seller_id,
+                        'price': option.price,
+                        'rental': option.isRental,
+                        'book_type': option.type,
+                        'link': option.link,
+                        'purchaseID': option.id
+                    })
+                else:
+                    old_list.append({
+                        'seller': option.remoteSellerName,
+                        'price': option.price,
+                        'rental': option.isRental,
+                        'book_type': option.type,
+                        'link': option.link,
+                        'purchaseID': option.id
+                    })
                 return old_list
             
             query_return = PurchaseChoice.get(book_id=book_id)

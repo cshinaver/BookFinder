@@ -4,8 +4,8 @@ from flask import Flask
 from flask.ext.login import LoginManager
 
 app = Flask(__name__)
-app.secret_key = 'super secret key'
 
+app.secret_key = 'super secret key'
 # Config
 # BOOKFINDER_SETTINGS must be set to development or production
 settings_type = os.environ.get('BOOKFINDER_SETTINGS', None)
@@ -23,6 +23,7 @@ login_manager.init_app(app)
 
 
 import bookfinder.views  # noqa
+import bookfinder.purchase.views
 import bookfinder.search.views  # noqa
 import bookfinder.api.views  # noqa
 import bookfinder.login.views  # noqa

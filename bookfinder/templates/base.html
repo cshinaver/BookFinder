@@ -35,8 +35,11 @@
 					</div>
 					<div class="navbar-collapse collapse" id="bs-example-navbar-collapse-1">
 						<ol class="nav navbar-nav navbar-left">
-                            <li><a id="navbar-brand" href="/all_books">All Books</a> </li>
-                        </ol>
+					        <li><a href="/all_books">All Books</a></li>
+					    </ol>
+					    <ol class="nav navbar-nav navbar-left">
+					        <li><a href="/purchase">Sell Books</a></li>
+					    </ol>
 						<ol class="nav navbar-nav navbar-right">
                             {% if current_user.is_authenticated %}
                             <li>
@@ -56,6 +59,34 @@
 			</div>
 			<div id="spacer" class="page-header"></div>
 		{% endblock %}
+		</div>
+		<div id="flash">
+			{% with errors = get_flashed_messages(category_filter=["error"]) %}
+				{% if errors %}
+					<div class="alert alert-danger">
+					  <a class="close" href="#">×</a>
+					  <ul>
+					    {%- for msg in errors %}
+					    <h4><strong>Error: </strong>{{ msg }}</h4>
+					    {% endfor -%}
+					  </ul>
+					</div>
+				{% endif %}
+			{% endwith %}
+
+			{% with errors = get_flashed_messages(category_filter=["success"]) %}
+				{% if errors %}
+					<div class="alert alert-success">
+					  <a class="close" href="#">×</a>
+					  <ul>
+					    {%- for msg in errors %}
+					    <h4><strong>Success: </strong>{{ msg }}</h4>
+					    {% endfor -%}
+					  </ul>
+					</div>
+				{% endif %}
+			{% endwith %}
+
 		</div>
 		<div id="content">{% block content %}{% endblock %}</div>
 		<div id="footer">

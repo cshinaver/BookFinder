@@ -243,7 +243,12 @@ def get_Barnes_book_prices_for_isbn(keyword):
 
         return list_books
     else:
-        return []
+        print (
+            "No results found at "
+            "'http://www.barnesandnoble.com' for '{keyword}'".format(
+                keyword=keyword,
+            )
+        )
 
 
 def get_google_books_for_isbn(isbn):
@@ -419,7 +424,7 @@ def get_google_books_for_isbn(isbn):
 def get_book_object_for_book_title(title):
     def get_book_info_from_book_item(item):
         book = Book()
-        volume_info = item['volumeInfo']
+        volume_info = top_item['volumeInfo']
         if not volume_info:
             return None
         book.title = volume_info['title']
@@ -448,9 +453,13 @@ def get_book_object_for_book_title(title):
     response = requests.get(url).json()
 
     # For now, just pull top item. Might change later
+    if not 'items' in response:
+        return -1
+
     top_item = response['items'][0]
     book = get_book_info_from_book_item(top_item)
     return book
+    #return [] for josh's code
 
 
 def get_book_object_list_for_book_title(title):
@@ -519,3 +528,5 @@ def get_book_object_list_for_book_title(title):
         if book is not None:
             books.append(book)
     return books
+
+
