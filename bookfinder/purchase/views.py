@@ -8,16 +8,17 @@ from bookfinder.models.purchasechoice import PurchaseChoice
 
 @app.route('/purchase/', methods=['GET', 'POST'])
 def home():
-    error = None
     form = LoginForm()
     #import ipdb; ipdb.set_trace()
     if request.method == 'POST':
         if request.form['ISBN'] == '':
             flash("No ISBN entered")
-            error = 'No ISBN entered'
-        elif request.form['Price'] == '':
+        if request.form['Price'] == '':
             flash("No Price entered")
-            error = 'No Price entered'
+        if request.form['Title'] == '':
+            flash("No Title entered")
+        if request.form['Author'] == '':
+            flash("No Author entered")
         else:
             flash("Book Submitted")
             # create book object using ISBN and Price
@@ -49,9 +50,8 @@ def home():
 
                 return redirect('')
             else:  # book is not valid
-                error = 'ISBN is no good'
+                flash('ISBN is invalid')
     return render_template(  # reference html script
         'purchase/purchase_index.html',
         form=form,
-        error=error,
     )

@@ -54,6 +54,19 @@
 			<div id="spacer" class="page-header"></div>
 		{% endblock %}
 		</div>
+		<div id="flash">
+			<div class="alert alert-dismissible alert-danger">
+			{% with messages = get_flashed_messages() %}
+			  {% if messages %}
+			    <ul class=flashes>
+			    {% for message in messages %}
+			      <li>{{ message | safe }}</li>
+			    {% endfor %}
+			    </ul>
+			  {% endif %}
+			{% endwith %}
+			</div>
+		</div>
 		<div id="content">{% block content %}{% endblock %}</div>
 		<div id="footer">
 		{% block footer %}
