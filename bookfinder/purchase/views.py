@@ -1,4 +1,4 @@
-from flask import render_template, request, flash, redirect
+from flask import Flask, render_template, request, flash, redirect
 from bookfinder import app
 from scraper import get_book_object_for_book_title
 from bookfinder.purchase.form import LoginForm
@@ -10,6 +10,7 @@ from bookfinder.models.purchasechoice import PurchaseChoice
 def home():
     error = None
     form = LoginForm()
+    #import ipdb; ipdb.set_trace()
     if request.method == 'POST':
         if request.form['ISBN'] == '':
             flash("No ISBN entered")
@@ -19,7 +20,6 @@ def home():
             error = 'No Price entered'
         else:
             flash("Book Submitted")
-
             # create book object using ISBN and Price
             ISBN = request.form['ISBN']
             Price = request.form['Price']
@@ -49,7 +49,7 @@ def home():
 
                 return redirect('')
             else:  # book is not valid
-                error('ISBN is no good')
+                error = 'ISBN is no good'
     return render_template(  # reference html script
         'purchase/purchase_index.html',
         form=form,
