@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect
 from bookfinder import app
-from scraper import get_book_object_for_book_title
+from bookfinder.api.scraper import get_book_object_for_book_title
 from bookfinder.purchase.form import LoginForm
 from bookfinder.models.book import Book
 from bookfinder.models.purchasechoice import PurchaseChoice
