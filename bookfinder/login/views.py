@@ -1,5 +1,14 @@
-from flask import request, render_template, abort, redirect, flash
-from flask.ext.login import login_user, logout_user
+from flask import (
+    request,
+    render_template,
+    abort,
+    redirect,
+    flash,
+)
+from flask.ext.login import (
+    login_user,
+    logout_user,
+)
 from psycopg2 import IntegrityError
 
 from bookfinder import app

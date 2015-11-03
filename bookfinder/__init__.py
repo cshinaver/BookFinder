@@ -27,3 +27,4 @@ import bookfinder.purchase.views
 import bookfinder.search.views  # noqa
 import bookfinder.api.views  # noqa
 import bookfinder.login.views  # noqa
+import bookfinder.profile.views  # noqa
