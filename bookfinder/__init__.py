@@ -24,6 +24,5 @@ login_manager.init_app(app)
 
 import bookfinder.views  # noqa
 import bookfinder.search.views  # noqa
-import bookfinder.search.prices.views  # noqa
 import bookfinder.api.views  # noqa
 import bookfinder.login.views  # noqa
