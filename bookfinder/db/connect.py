@@ -25,21 +25,24 @@ def init_db():
                 ISBN varchar(13) unique,
                 author varchar(100)
             );
+            create table BookfinderUser(
+                id serial primary key,
+                username varchar(20) unique,
+                email varchar(50),
+                pw_hash varchar(160)
+            );
             create table PurchaseChoice(
                 id serial primary key,
                 price varchar(10),
                 type varchar(20),
                 isRental boolean,
                 link varchar(100),
-                seller varchar(30),
+                local_seller_id int,
+                isLocalSeller boolean,
+                remoteSellerName varchar(30),
                 book_id int,
-                foreign key (book_id) references Book(id)
-            );
-            create table BookfinderUser(
-                id serial primary key,
-                username varchar(20) unique,
-                email varchar(50),
-                pw_hash varchar(160)
+                foreign key (book_id) references Book(id),
+                foreign key (local_seller_id) references BookfinderUser(id)
             );
         '''
     )

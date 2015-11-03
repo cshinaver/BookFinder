@@ -7,5 +7,7 @@ class PurchaseChoice(BaseModel):
     type = None
     isRental = None
     link = None
-    seller = None
+    local_seller_id = None
+    isLocalSeller = None
+    remoteSellerName = None
     book_id = None

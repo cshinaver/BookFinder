@@ -4,9 +4,10 @@ from scraper import get_book_object_for_book_title
 from bookfinder.purchase.form import LoginForm
 from bookfinder.models.book import Book
 from bookfinder.models.purchasechoice import PurchaseChoice
-
+from flask.ext.login import current_user, login_required
 
 @app.route('/purchase/', methods=['GET', 'POST'])
+@login_required
 def home():
     form = LoginForm()
     #import ipdb; ipdb.set_trace()
@@ -44,7 +45,8 @@ def home():
                 p.type = 'Hardcover'
                 p.isRental = False
                 p.link = '' # change to valid link
-                p.seller = 'Foo Bar Seller' # change to user once login is created
+                p.local_seller_id = current_user.id # change to user once login is created
+                p.isLocalSeller = True
                 p.save()
                 flash('Your book has been logged into the database. Yeah!!!', 'success')
                 return redirect('')
