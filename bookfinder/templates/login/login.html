@@ -11,7 +11,10 @@
             {% if form.password.errors %}
                 <ul class="errors">{% for error in form.password.errors %}<li>{{ error }}</li>{% endfor %}</ul>
             {% endif %}
-            <input type="submit" />
+            <input class="btn btn-default" type="submit" />
         </form>
+        <br>
+
+        <a class="btn btn-default" href="/login/create_user">Create User</a>
 	</div>
 {% endblock %}
