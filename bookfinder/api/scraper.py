@@ -470,11 +470,31 @@ def get_book_object_list_for_book_title(title):
 
         identifiers = volume_info['industryIdentifiers']
         # if there is only 1 identifier, don't use this book option
-        if len(identifiers)<2:
+        if len(identifiers)==0:
+            #there is no ISBN specified - return nothing
             return None
-        book.isbn = (
-            identifiers[1]['identifier']
-        )
+        elif len(identifiers)==1:
+            #there is one ISBN specified
+            book.isbn = (
+                identifiers[0]['identifier']
+            )
+        else:
+            #there are multiple ISBNs specified
+            #get list of all ISBNs to sort through
+            all_isbns = []
+            for identif in identifiers:
+                all_isbns.append(identif['identifier'])
+            #iterate through list of ISBNs to get 13-character version
+            isbn_13_found = False
+            for ISBN in all_isbns:
+                if len(ISBN)==13:
+                    book.isbn = ISBN
+                    isbn_13_found = True
+            #if none found, default to the first element
+            if not isbn_13_found:
+                book.isbn = (
+                    identifiers[0]['identifier']
+                )
         return book
 
     url = (

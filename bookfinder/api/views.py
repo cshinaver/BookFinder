@@ -39,7 +39,7 @@ def used_option_query():
                 })
                 return old_list
             
-            query_return = PurchaseChoice().get(book_id=book_id)
+            query_return = PurchaseChoice.get(book_id=book_id)
             if isinstance(book_query,list):
                 for option in query_return:
                     option_list = add_to_list(option_list,option)
@@ -47,11 +47,11 @@ def used_option_query():
                 option_list = add_to_list(option_list,query_return)
             return option_list
         
-        book_query = Book().get(isbn=isbn)
+        book_query = Book.get(isbn=isbn)
         if book_query is None:#return blank list if this book is not yet in the database
             option_list = []
         elif isinstance(book_query,list):
-            print 'WARNING: There are multiple books with ISBN {isbn}'.format(isbn=isbn)
+            # This indicates there are multiple books with the same ISBN number, which shouldn't happen
             option_list = []
             for book in book_query:
                 option_list = fill_list_by_bookid(option_list,book.id)
