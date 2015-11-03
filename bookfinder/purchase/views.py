@@ -30,7 +30,9 @@ def home():
             Title = request.form['Title']
 
             # check if book has correct ISBN
-            if get_book_object_for_book_title(ISBN) != -1:
+            if get_book_object_for_book_title('isbn:'+ISBN) != -1:
+                #Check DB for duplicate isbn entry. If so just make purchase option
+                
                 #  add book to DB
                 b = Book()
                 b.author = Author
