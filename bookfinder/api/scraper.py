@@ -468,6 +468,9 @@ def get_book_object_list_for_book_title(title):
         if image_links:
             book.thumbnail_link = image_links.get('thumbnail')
 
+        if 'industryIdentifiers' not in volume_info:
+            #there is no ISBN specified - return nothing
+            return None
         identifiers = volume_info['industryIdentifiers']
         # if there is only 1 identifier, don't use this book option
         if len(identifiers)==0:
