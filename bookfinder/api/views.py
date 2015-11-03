@@ -21,30 +21,40 @@ def book_query():
 
 @app.route('/api/used_option_list/')
 def used_option_query():
-    isbn = request.args.get('isbn')
-    option_list = []
-    book_query = execute_sql_query(
-        "SELECT * FROM Book WHERE isbn='{ISBN}'".format(
-            ISBN=isbn
-        )
-    )
-    if len(book_query)==0:#return blank list if this book is not yet in the database
-        return '[]'
-    book_id = book_query[0]['id']
-    query_return = execute_sql_query(
-        "SELECT * FROM PurchaseChoice WHERE book_id={book_id}".format(
-            book_id=book_id
-        )
-    )
-    for option in query_return:
-        option_list.append({
-            'seller': option['seller'],
-            'price': option['price'],
-            'rental': option['isrental'],
-            'book_type': option['type'],
-            'link': option['link'],
-            'purchaseID': option['id']
-        })
+    def get_list_by_isbn(isbn):
+        def fill_list_by_bookid(option_list,book_id):
+            def add_to_list(list,option):
+                list.append({
+                    'seller': option.seller,
+                    'price': option.price,
+                    'rental': option.isRental,
+                    'book_type': option.type,
+                    'link': option.link,
+                    'purchaseID': option.id
+                })
+                return list
+            
+            query_return = PurchaseChoice().get(book_id=book_id)
+            if isinstance(book_query,list):
+                for option in query_return:
+                    option_list = add_to_list(option_list,option)
+            else:
+                option_list = add_to_list(option_list,query_return)
+            return option_list
+        
+        book_query = Book().get(isbn=isbn)
+        if book_query is None:#return blank list if this book is not yet in the database
+            option_list = []
+        elif isinstance(book_query,list):
+            print 'WARNING: There are multiple books with ISBN {isbn}'.format(isbn=isbn)
+            option_list = []
+            for book in book_query:
+                option_list = fill_list_by_bookid(option_list,book.id)
+        else:
+            option_list = fill_list_by_bookid([],book_query.id)
+        return option_list
+    
+    option_list = get_list_by_isbn(request.args.get('isbn'))
     json_output = json.dumps(option_list, sort_keys=True, indent=4)
     return json_output
 
@@ -94,31 +104,3 @@ def comparison_option_query():
             option_list.append(option.to_dict())
     json_output = json.dumps(option_list, sort_keys=True, indent=4)
     return json_output
-
-
-# DEBUG - add book
-# example address: http://localhost:5000/api/debug/add_book/?title=Book_title&isbn=1625847602&author=test_author
-@app.route('/api/debug/add_book/')
-def add_book():
-    new_book = Book()
-    new_book.title = request.args.get('title')
-    new_book.isbn = request.args.get('isbn')
-    new_book.author = request.args.get('author')
-    new_book.save()
-    return '{id}'.format(id=new_book.id)
-#/DEBUG - add book
-
-# DEBUG - add purchase option
-# example address: http://localhost:5000/api/debug/add_purchase_option/?price=12.34&type=print&isRental=true&link=http://www.google.com&seller=test_seller_2&book_id=3
-@app.route('/api/debug/add_purchase_option/')
-def add_purchase_option():
-    new_option = PurchaseChoice()
-    new_option.price = request.args.get('price')
-    new_option.type = request.args.get('type')
-    new_option.isRental = request.args.get('isRental')
-    new_option.link = request.args.get('link')
-    new_option.seller = request.args.get('seller')
-    new_option.book_id = request.args.get('book_id')
-    new_option.save()
-    return '{id}'.format(id=new_option.id)
-#/DEBUG - add purchase option

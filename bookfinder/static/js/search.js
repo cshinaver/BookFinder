@@ -14,7 +14,7 @@ function get_book_list(query) {
 }
 
 function fill_search(text) {
-	document.getElementById("head-search-bar_text").value = text;
+	//document.getElementById("head-search-bar_text").value = text;
 	document.getElementById("main-search-bar_text").value = text;
 }
 

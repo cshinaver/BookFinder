@@ -68,12 +68,12 @@ class BaseModel:
             '''
                 select *
                 from {table_name}
-                where
             '''.format(
                 table_name=cls.__name__,
             )
         )
         if kwargs:
+            where_str = ' where '
             where_args = {}
             for k, v in kwargs.iteritems():
                 if isinstance(v, basestring):
@@ -81,7 +81,7 @@ class BaseModel:
                 else:
                     v = str(v)
                 where_args[k] = v
-            where_str = ' and '.join(
+            where_str += ' and '.join(
                 "{k}={v}".format(
                     k=k,
                     v=v,
