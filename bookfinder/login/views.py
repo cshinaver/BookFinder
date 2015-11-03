@@ -1,7 +1,6 @@
 from flask import (
     request,
     render_template,
-    abort,
     redirect,
     flash,
 )
@@ -52,12 +51,14 @@ def login():
             # Authenticate user
             u = User.get(username=username)
             if not u:
-                return abort(400)
+                flash('Incorrect Username', 'error')
+                return redirect('/login')
             if u.check_password(password):
                 login_user(u)
                 return redirect('')
             else:
-                return abort(400)
+                flash('Incorrect Password', 'error')
+                return redirect('/login')
 
     else:
         form = LoginForm()
