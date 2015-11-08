@@ -64,6 +64,7 @@ class Book:
     def __init__(self, *args, **kwargs):
         self.title = ''
         self.subtitle = ''
+        self.author = ''
         self.isbn = ''
         self.thumbnail_link = ''
 
@@ -71,10 +72,12 @@ class Book:
         return (
             "Title: {title}\n"
             "Subtitle: {subtitle}\n"
+            "Author: {author}\n"
             "ISBN: {ISBN}\n"
             "Thumbnail link: {thumbnail_link}\n".format(
                 title=self.title,
                 subtitle=self.subtitle,
+                author=self.author,
                 ISBN=self.isbn,
                 thumbnail_link=self.thumbnail_link,
             )
@@ -84,6 +87,7 @@ class Book:
         return {
             'Title': self.title,
             'Subtitle': self.subtitle,
+            'Author': self.author,
             'isbn': self.isbn,
             'Thumbnail_link': self.thumbnail_link
         }
