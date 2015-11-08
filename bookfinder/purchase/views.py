@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect
 from bookfinder import app
-from bookfinder.api.scraper import get_book_object_for_book_title
+from bookfinder.api.scraper import get_book_object_for_book_title, get_book_object_list_for_book_title
 from bookfinder.purchase.form import LoginForm
 from bookfinder.models.book import Book
 from bookfinder.models.base import BaseModel
@@ -17,8 +17,7 @@ def home():
         Price = request.form['Price']
         Type = 'Book'
         isRental = False
-        Author = request.form['Author']
-        Title = request.form['Title']
+
 
 
         if ISBN == '':
@@ -27,16 +26,18 @@ def home():
             flash('ISBN needs to be 13 characters long', 'error') 
         if Price == '':
             flash(u"No Price entered", "error")
-        if Title == '':
-            flash(u"No Title entered", "error")
-        if Author == '':
-            flash(u"No Author entered", "error")
         if get_book_object_for_book_title('isbn:'+ISBN) == -1:
             flash('ISBN is invalid', 'error')
-        elif Author != '' and Title != '' and Price != '' and ISBN != '' and len(ISBN) == 13:
+        elif Price != '' and ISBN != '' and len(ISBN) == 13:
             #Check if book has correct ISBN
             #Check DB for duplicate isbn entry. If so just make purchase option
-            
+            temp_book = get_book_object_for_book_title('isbn:'+ISBN)
+            Author = temp_book.author
+            if(temp_book.subtitle is None):
+                Title = temp_book.title
+            else:
+                Title = temp_book.title+': '+temp_book.subtitle
+
             #  add book to DB
             b = Book()
             b.author = Author
