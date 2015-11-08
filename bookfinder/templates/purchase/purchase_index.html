@@ -4,10 +4,11 @@
 {% block content %}
 <div class="container">
   <h1>Hello {{ current_user.username }}!</h1>
+  <h3>Book Information</h3>
   <form action="" method="post" name="login">
       {{ form.hidden_tag() }} <!--necessary for CSRF prevention-->
       <p>
-          Please enter the ISBN of the book you would like to sell:<br>
+          Enter ISBN-13 (13 digits):<br>
           {{ form.ISBN(size=80) }}<br>
       </p>
       <p>
