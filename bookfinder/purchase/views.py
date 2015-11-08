@@ -21,17 +21,19 @@ def home():
         Title = request.form['Title']
 
 
-        if request.form['ISBN'] == '':
+        if ISBN == '':
             flash(u'No ISBN entered', 'error')
-        if request.form['Price'] == '':
+        if len(ISBN) != 13:
+            flash('ISBN needs to be 13 characters long', 'error') 
+        if Price == '':
             flash(u"No Price entered", "error")
-        if request.form['Title'] == '':
+        if Title == '':
             flash(u"No Title entered", "error")
-        if request.form['Author'] == '':
+        if Author == '':
             flash(u"No Author entered", "error")
         if get_book_object_for_book_title('isbn:'+ISBN) == -1:
             flash('ISBN is invalid', 'error')
-        elif request.form['Author'] != '' and request.form['Title'] != '' and request.form['Price'] != '' and request.form['ISBN'] != '':
+        elif Author != '' and Title != '' and Price != '' and ISBN != '' and len(ISBN) == 13:
             #Check if book has correct ISBN
             #Check DB for duplicate isbn entry. If so just make purchase option
             
