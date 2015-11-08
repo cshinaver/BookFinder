@@ -40,8 +40,12 @@ def home():
             b.author = Author
             b.title = Title
             b.isbn = ISBN
-            if not (Book.get(isbn=ISBN)):    #if get returns true, already book in DB
+
+            temp_book_item = Book.get(isbn=ISBN)
+            if not (temp_book_item):    #if get returns true, already book in DB
                 b.save()
+            else:
+                b.id = temp_book_item.id
 
             # add purchaseChoice to DB
             p = PurchaseChoice()
