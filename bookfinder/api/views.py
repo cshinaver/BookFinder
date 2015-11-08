@@ -50,7 +50,7 @@ def used_option_query():
                 return old_list
             
             query_return = PurchaseChoice.get(book_id=book_id)
-            if isinstance(option_list,list):
+            if isinstance(query_return,list):
                 for option in query_return:
                     option_list = add_to_list(option_list,option)
             else:
