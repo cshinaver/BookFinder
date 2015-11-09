@@ -474,7 +474,12 @@ def get_book_object_list_for_book_title(title):
             return None
         book.title = volume_info['title']
         book.subtitle = volume_info.get('subtitle')
-        book.author = volume_info.get('authors')
+        authors = volume_info.get('authors')
+        book.author = authors[0]
+        # handle multiple authors by comma-delimiting them
+        for author in authors:
+            if book.author != author:
+                book.author+= (', '+author)
         image_links = volume_info.get(
             'imageLinks'
         )
