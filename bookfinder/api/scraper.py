@@ -433,7 +433,7 @@ def get_book_object_for_book_title(title):
             return None
         book.title = volume_info['title']
         book.subtitle = volume_info.get('subtitle')
-        book.author = volume_info.get('authors')
+        book.author = volume_info.get('authors')[0]
         image_links = volume_info.get(
             'imageLinks'
         )

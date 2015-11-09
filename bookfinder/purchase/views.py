@@ -22,17 +22,19 @@ def home():
 
         if ISBN == '':
             flash(u'No ISBN entered', 'error')
-        if len(ISBN) != 13:
-            flash('ISBN needs to be 13 characters long', 'error') 
         if Price == '':
             flash(u"No Price entered", "error")
-        if get_book_object_for_book_title('isbn:'+ISBN) == -1:
+        if len(ISBN) != 10 and len(ISBN) !=13:
+            flash("ISBN has incorrect number of characters. Please enter ISBN-10 or ISBN-13", 'error')
+        #import ipdb; ipdb.set_trace()
+        if not get_book_object_list_for_book_title('isbn:'+ISBN):
             flash('ISBN is invalid', 'error')
-        elif Price != '' and ISBN != '' and len(ISBN) == 13:
+        elif Price != '' and ISBN != '' and (len(ISBN) == 10 or len(ISBN)==13):
             #Check if book has correct ISBN
             #Check DB for duplicate isbn entry. If so just make purchase option
-            temp_book = get_book_object_for_book_title('isbn:'+ISBN)
+            temp_book = get_book_object_list_for_book_title('isbn:'+ISBN)[0]
             Author = temp_book.author
+            ISBN = temp_book.isbn
             if(temp_book.subtitle is None):
                 Title = temp_book.title
             else:
