@@ -27,12 +27,13 @@ def home():
         if len(ISBN) != 10 and len(ISBN) !=13:
             flash("ISBN has incorrect number of characters. Please enter ISBN-10 or ISBN-13", 'error')
         #import ipdb; ipdb.set_trace()
-        if not get_book_object_list_for_book_title('isbn:'+ISBN):
+        qry_var = get_book_object_list_for_book_title('isbn:'+ISBN)
+        if not qry_var:
             flash('ISBN is invalid', 'error')
         elif Price != '' and ISBN != '' and (len(ISBN) == 10 or len(ISBN)==13):
             #Check if book has correct ISBN
             #Check DB for duplicate isbn entry. If so just make purchase option
-            temp_book = get_book_object_list_for_book_title('isbn:'+ISBN)[0]
+            temp_book = qry_var[0]
             Author = temp_book.author
             ISBN = temp_book.isbn
             if(temp_book.subtitle is None):
