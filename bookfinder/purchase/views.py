@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, flash, redirect
 from bookfinder import app
-from bookfinder.api.scraper import get_book_object_for_book_title, get_book_object_list_for_book_title
+from bookfinder.api.scraper import get_book_object_for_book_title
 from bookfinder.purchase.form import LoginForm
 from bookfinder.models.book import Book
 from bookfinder.models.base import BaseModel
@@ -17,7 +17,8 @@ def home():
         Price = request.form['Price']
         Type = 'Book'
         isRental = False
-
+        Author = request.form['Author']
+        Title = request.form['Title']
 
 
         if ISBN == '':
