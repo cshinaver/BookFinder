@@ -209,7 +209,7 @@ def get_Barnes_book_prices_for_isbn(keyword):
         list_wrapper_item = soup.find('section', id='prodSummary')
         product_info = list_wrapper_item.find('li', class_='tab selected')
         if product_info is None:
-            #if no 'li' element, there are no results, so return a blank list
+            # if no 'li' element, there are no results, so return a blank list
             return []
         item_url_extension = (product_info.find_all('a')[0]).attrs['href']
         item_base = "http://www.barnesandnoble.com"
@@ -232,7 +232,8 @@ def get_Barnes_book_prices_for_isbn(keyword):
 
         new_rental = soup.find('section', id='skuSelection')
         if new_rental is None:
-            #this indicates there is no list of rental options, so return the current list
+            # this indicates there is no list of rental options,
+            # so return the current list
             return list_books
         if(new_rental.find('p', class_='price rental-price')):
             new_rental_option = PurchaseOption()
@@ -375,7 +376,8 @@ def get_google_books_for_isbn(isbn):
         button_text = get_button.text
         button_link = get_button.attrs['href']
         # Button has two possible formats for eBooks.
-        # They should be handled almost the same, so they are separated into boolean variables.
+        # They should be handled almost the same,
+        # so they are separated into boolean variables.
         is_buy_ebook = button_text.startswith('Buy eBook - $')
         is_ebook_from = button_text.startswith('EBOOK FROM $')
         if (is_buy_ebook or is_ebook_from):
@@ -402,7 +404,8 @@ def get_google_books_for_isbn(isbn):
             option.is_rental = False
             option.purchaseID = ''
             option_list.append(option)
-        # a "Get print book" link provides a link to a list of prices, so load that page.
+        # a "Get print book" link provides a link to a list of prices,
+        # so load that page.
         elif button_text == 'Get print book':
             option_list = extract_google_books_price_list_from_link(
                 button_link,
@@ -430,7 +433,7 @@ def get_google_books_for_isbn(isbn):
 
     link = get_google_books_page_link_for_isbn(isbn)
     if link is None:
-        #there are no search results for this isbn, so return blank list
+        # there are no search results for this isbn, so return blank list
         return []
     return extract_google_books_prices_from_page_link(link)
 
@@ -467,13 +470,13 @@ def get_book_object_for_book_title(title):
     response = requests.get(url).json()
 
     # For now, just pull top item. Might change later
-    if not 'items' in response:
+    if 'items' not in response:
         return -1
 
     top_item = response['items'][0]
     book = get_book_info_from_book_item(top_item)
     return book
-    #return [] for josh's code
+    # return [] for josh's code
 
 
 def get_book_object_list_for_book_title(title):
@@ -489,7 +492,7 @@ def get_book_object_list_for_book_title(title):
         # handle multiple authors by comma-delimiting them
         for author in authors:
             if book.author != author:
-                book.author+= (', '+author)
+                book.author += (', '+author)
         image_links = volume_info.get(
             'imageLinks'
         )
@@ -497,31 +500,31 @@ def get_book_object_list_for_book_title(title):
             book.thumbnail_link = image_links.get('thumbnail')
 
         if 'industryIdentifiers' not in volume_info:
-            #there is no ISBN specified - return nothing
+            # there is no ISBN specified - return nothing
             return None
         identifiers = volume_info['industryIdentifiers']
         # if there is only 1 identifier, don't use this book option
-        if len(identifiers)==0:
-            #there is no ISBN specified - return nothing
+        if len(identifiers) == 0:
+            # there is no ISBN specified - return nothing
             return None
-        elif len(identifiers)==1:
-            #there is one ISBN specified
+        elif len(identifiers) == 1:
+            # there is one ISBN specified
             book.isbn = (
                 identifiers[0]['identifier']
             )
         else:
-            #there are multiple ISBNs specified
-            #get list of all ISBNs to sort through
+            # there are multiple ISBNs specified
+            # get list of all ISBNs to sort through
             all_isbns = []
             for identif in identifiers:
                 all_isbns.append(identif['identifier'])
-            #iterate through list of ISBNs to get 13-character version
+            # iterate through list of ISBNs to get 13-character version
             isbn_13_found = False
             for ISBN in all_isbns:
-                if len(ISBN)==13:
+                if len(ISBN) == 13:
                     book.isbn = ISBN
                     isbn_13_found = True
-            #if none found, default to the first element
+            # if none found, default to the first element
             if not isbn_13_found:
                 book.isbn = (
                     identifiers[0]['identifier']
@@ -547,5 +550,3 @@ def get_book_object_list_for_book_title(title):
         if book is not None:
             books.append(book)
     return books
-
-
