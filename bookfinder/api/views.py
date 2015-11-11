@@ -29,6 +29,7 @@ def used_option_query():
     def get_list_by_isbn(isbn):
         def fill_list_by_bookid(option_list,book_id):
             def add_to_list(old_list,option):
+                option.price = "{:.2f}".format(float(option.price))
                 if option.isLocalSeller:
                     old_list.append({
                         'seller': option.local_seller_id,
