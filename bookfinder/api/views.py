@@ -1,4 +1,5 @@
 from flask import request
+from flask.views import View
 
 from bookfinder import app
 from bookfinder.models.book import Book
@@ -23,39 +24,13 @@ def book_query():
     return json_output
 
 
-@app.route('/api/used_option_list/')
-def used_option_query():
-    def get_list_by_isbn(isbn):
-        def fill_list_by_bookid(option_list, book_id):
-            def add_to_list(old_list, option):
-                if option.isLocalSeller:
-                    old_list.append({
-                        'seller': option.local_seller_id,
-                        'price': option.price,
-                        'rental': option.isRental,
-                        'book_type': option.type,
-                        'link': option.link,
-                        'purchaseID': option.id
-                    })
-                else:
-                    old_list.append({
-                        'seller': option.remoteSellerName,
-                        'price': option.price,
-                        'rental': option.isRental,
-                        'book_type': option.type,
-                        'link': option.link,
-                        'purchaseID': option.id
-                    })
-                return old_list
+class UsedOptionList(View):
+    def dispatch_request(self):
+        option_list = self.get_list_by_isbn(request.args.get('isbn'))
+        json_output = json.dumps(option_list, sort_keys=True, indent=4)
+        return json_output
 
-            query_return = PurchaseChoice.get(book_id=book_id)
-            if isinstance(query_return, list):
-                for option in query_return:
-                    option_list = add_to_list(option_list, option)
-            else:
-                option_list = add_to_list(option_list, query_return)
-            return option_list
-
+    def get_list_by_isbn(self, isbn):
         book_query = Book.get(isbn=isbn)
         # return blank list if this book is not yet in the database
         if book_query is None:
@@ -65,14 +40,40 @@ def used_option_query():
             # with the same ISBN number, which shouldn't happen
             option_list = []
             for book in book_query:
-                option_list = fill_list_by_bookid(option_list, book.id)
+                option_list = self.fill_list_by_bookid(option_list, book.id)
         else:
-            option_list = fill_list_by_bookid([], book_query.id)
+            option_list = self.fill_list_by_bookid([], book_query.id)
         return option_list
 
-    option_list = get_list_by_isbn(request.args.get('isbn'))
-    json_output = json.dumps(option_list, sort_keys=True, indent=4)
-    return json_output
+    def fill_list_by_bookid(self, option_list, book_id):
+        def add_to_list(old_list, option):
+            if option.isLocalSeller:
+                old_list.append({
+                    'seller': option.local_seller_id,
+                    'price': option.price,
+                    'rental': option.isRental,
+                    'book_type': option.type,
+                    'link': option.link,
+                    'purchaseID': option.id
+                })
+            else:
+                old_list.append({
+                    'seller': option.remoteSellerName,
+                    'price': option.price,
+                    'rental': option.isRental,
+                    'book_type': option.type,
+                    'link': option.link,
+                    'purchaseID': option.id
+                })
+            return old_list
+
+        query_return = PurchaseChoice.get(book_id=book_id)
+        if isinstance(query_return, list):
+            for option in query_return:
+                option_list = add_to_list(option_list, option)
+        else:
+            option_list = add_to_list(option_list, query_return)
+        return option_list
 
 
 @app.route('/api/comparison_option_list/')
@@ -93,3 +94,8 @@ def comparison_option_query():
             option_list.append(option.to_dict())
     json_output = json.dumps(option_list, sort_keys=True, indent=4)
     return json_output
+
+app.add_url_rule(
+    '/api/used_option_list/',
+    view_func=UsedOptionList.as_view('used_option_list'),
+)
