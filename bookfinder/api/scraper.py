@@ -120,7 +120,7 @@ class AmazonScraper:
         return book_list_items
 
     def _parse_price_bulk_item_into_book(self, item, title):
-        new_book = PurchaseOption()
+        new_book = {}
         price_tag = item.find(
             'span',
             class_="a-size-base a-color-price s-price a-text-bold",
@@ -137,13 +137,13 @@ class AmazonScraper:
             book_price = book_price.split(' ')[-1]
         # Strips '$'
         book_price = book_price.strip('$')
-        new_book.price = Decimal(book_price)
+        new_book['price'] = Decimal(book_price)
         link = item.attrs['href']
         # Amazon links have weird &amp; in them which breaks them
         # Remove anything after the first & arg
-        new_book.link = link[:link.find('&')]
-        new_book.title = title
-        new_book.seller = 'Amazon'
+        new_book['link'] = link[:link.find('&')]
+        new_book['title'] = title
+        new_book['seller'] = 'Amazon'
 
         # determine if is rental
         rent_or_buy_item = item.find(
@@ -152,7 +152,7 @@ class AmazonScraper:
         )
         if rent_or_buy_item:
             rent_or_buy_text = rent_or_buy_item.get_text()
-            new_book.is_rental = "rent" in rent_or_buy_text
+            new_book['is_rental'] = "rent" in rent_or_buy_text
 
         return new_book
 
@@ -169,7 +169,9 @@ class AmazonScraper:
             'a',
             class_="a-link-normal s-access-detail-page a-text-normal",
         )
-        new_book_title = link_item.attrs['title']
+        if not link_item:
+            return []
+        new_book_title = link_item.attrs['title'].encode('utf8')
 
         # Handle pricing for hardcover, Paperback, Kindle Edition, rent
         price_column_item = item.find('div', class_="a-column a-span7")
@@ -187,7 +189,7 @@ class AmazonScraper:
                 book_type = new_book_type
                 continue
             book = self._parse_price_bulk_item_into_book(item, new_book_title)
-            book.book_type = book_type
+            book['book_type'] = book_type
             if book:
                 new_books.append(book)
         return new_books
