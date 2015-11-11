@@ -480,6 +480,7 @@ def get_book_object_for_book_title(title):
 
 
 def get_books_for_book_title_using_google_books(title):
+    """ Uses Google Books api in order to get books by title """
     def get_book_info_from_book_item(item):
         book = Book()
         volume_info = item['volumeInfo']
