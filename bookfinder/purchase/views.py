@@ -1,7 +1,7 @@
 from flask import render_template, request, flash, redirect
 from bookfinder import app
 from bookfinder.api.scraper import get_book_object_list_for_book_title
-from bookfinder.purchase.form import LoginForm
+from bookfinder.purchase.form import PurchaseForm
 from bookfinder.models.book import Book
 from bookfinder.models.purchasechoice import PurchaseChoice
 from flask.ext.login import current_user, login_required
@@ -10,7 +10,7 @@ from flask.ext.login import current_user, login_required
 @app.route('/purchase/', methods=['GET', 'POST'])
 @login_required
 def home():
-    form = LoginForm()
+    form = PurchaseForm()
     if request.method == 'POST':
         ISBN = request.form['ISBN']
         Price = request.form['Price']
