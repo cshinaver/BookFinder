@@ -152,7 +152,7 @@ class AmazonScraper:
         )
         if rent_or_buy_item:
             rent_or_buy_text = rent_or_buy_item.get_text()
-            new_book['is_rental'] = "rent" in rent_or_buy_text
+            new_book['rental'] = "rent" in rent_or_buy_text
 
         return new_book
 
