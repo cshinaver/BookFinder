@@ -83,9 +83,7 @@ def comparison_option_query():
     isbn = request.args.get('isbn')
     option_list = []
     amazon_list = AmazonScraper().get_amazon_books_for_keyword(isbn)
-    if amazon_list is not None:
-        for option in amazon_list:
-            option_list.append(option.to_dict())
+    option_list.extend(amazon_list)
     barnes_list = get_Barnes_book_prices_for_isbn(isbn)
     if barnes_list is not None:
         for option in barnes_list:
