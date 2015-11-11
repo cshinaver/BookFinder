@@ -165,6 +165,10 @@ class AmazonScraper:
                 return text
 
         # Title and link contained in link element
+        isbn = item.attrs['data-asin'].encode('utf8')
+        # If B in isbn, some kind of amazon special book
+        if 'B' in isbn:
+            return []
         link_item = item.find(
             'a',
             class_="a-link-normal s-access-detail-page a-text-normal",
@@ -192,6 +196,9 @@ class AmazonScraper:
             book['book_type'] = book_type
             if book:
                 new_books.append(book)
+        # Add isbn
+        for book in new_books:
+            book['isbn'] = isbn
         return new_books
 
 
