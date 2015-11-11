@@ -94,11 +94,24 @@ class Book:
 
 
 class AmazonScraper:
-    def get_amazon_books_for_keyword(self, keyword):
+    def get_amazon_purchase_choices_for_keyword(self, keyword):
         content = self._get_page_for_amazon_book_search(keyword)
         items = self._get_book_list_items_from_content(content)
         book_lists = map(self._parse_book_list_item_into_books, items)
         return [item for sublist in book_lists for item in sublist]
+
+    def get_amazon_books_for_keyword(self, keyword):
+        content = self._get_page_for_amazon_book_search(keyword)
+        items = self._get_book_list_items_from_content(content)
+        book_lists = map(self._parse_book_list_item_into_books, items)
+        books = [item for sublist in book_lists for item in sublist]
+        unique_books = []
+        isbns = set([])
+        for book in books:
+            if book['isbn'] not in isbns:
+                unique_books.append(book)
+                isbns.add(book['isbn'])
+        return unique_books
 
     def _get_page_for_amazon_book_search(self, keyword):
         search_string = (

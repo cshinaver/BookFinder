@@ -82,7 +82,7 @@ class UsedOptionList(View):
 def comparison_option_query():
     isbn = request.args.get('isbn')
     option_list = []
-    amazon_list = AmazonScraper().get_amazon_books_for_keyword(isbn)
+    amazon_list = AmazonScraper().get_amazon_purchase_choices_for_keyword(isbn)
     option_list.extend(amazon_list)
     barnes_list = get_Barnes_book_prices_for_isbn(isbn)
     if barnes_list is not None:
