@@ -34,12 +34,6 @@ function add_book_to_list(book) {
 	new_title.appendChild(new_title_text);
 	new_title.setAttribute("class","list-group-item-heading");
 	new_info_frame.appendChild(new_title);
-	//subtitle:
-	var new_subtitle = document.createElement("p");
-	var new_subtitle_text = document.createTextNode(book.Subtitle);
-	new_subtitle.appendChild(new_subtitle_text);
-	new_subtitle.setAttribute("class","list-group-item-text");
-	new_info_frame.appendChild(new_subtitle);
 	//isbn:
 	var new_isbn = document.createElement("p");
 	var new_isbn_text = document.createTextNode(book.isbn);
