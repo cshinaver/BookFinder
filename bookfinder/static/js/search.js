@@ -30,7 +30,7 @@ function add_book_to_list(book) {
 	var new_info_frame = document.createElement("div");
 	//title:
 	var new_title = document.createElement("h4");
-	var new_title_text = document.createTextNode(book.Title);
+	var new_title_text = document.createTextNode(book.title);
 	new_title.appendChild(new_title_text);
 	new_title.setAttribute("class","list-group-item-heading");
 	new_info_frame.appendChild(new_title);
