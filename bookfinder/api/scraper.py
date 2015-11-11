@@ -137,7 +137,7 @@ class AmazonScraper:
             book_price = book_price.split(' ')[-1]
         # Strips '$'
         book_price = book_price.strip('$')
-        new_book['price'] = Decimal(book_price)
+        new_book['price'] = book_price
         link = item.attrs['href']
         # Amazon links have weird &amp; in them which breaks them
         # Remove anything after the first & arg
