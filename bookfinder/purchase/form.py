@@ -3,6 +3,6 @@ from wtforms import StringField, DecimalField
 from wtforms.validators import DataRequired
 
 
-class PurchaseForm(Form):
+class SellBookForm(Form):
     ISBN = StringField('ISBN', validators=[DataRequired()])
     Price = DecimalField('Price', validators=[DataRequired()])
