@@ -14,21 +14,22 @@ class SellBook(View):
     def dispatch_request(self):
         form = SellBookForm()
         if request.method == 'POST':
-            ISBN = request.form['ISBN']
-            Price = request.form['Price']
+            isbn = request.form['ISBN']
+            price = request.form['Price']
 
-            errors = self.form_error_checking(isbn=ISBN, price=Price)
+            isbn, price = self.format_input_data(isbn=isbn, price=price)
+            errors = self.form_error_checking(isbn=isbn, price=price)
             if errors:
                 return self.redirect_to_self_with_errors(errors)
 
-            temp_book_ls, errors = self.get_book_from_isbn(isbn=ISBN)
+            temp_book_ls, errors = self.get_book_from_isbn(isbn=isbn)
             if errors:
                 return self.redirect_to_self_with_errors(errors)
 
             errors = self.create_and_store_purchase_option(
                 temp_book=temp_book_ls[0],
-                isbn=ISBN,
-                price=Price,
+                isbn=isbn,
+                price=price,
             )
             if errors:
                 return self.redirect_to_self_with_errors(errors)
@@ -40,6 +41,12 @@ class SellBook(View):
                 'purchase/purchase_index.html',
                 form=form,
             )
+
+    def format_input_data(self, isbn, price):
+        # Strip '-'
+        isbn = isbn.replace('-', '')
+
+        return isbn, price
 
     def create_and_store_purchase_option(self, temp_book, isbn, price):
         errors = []
