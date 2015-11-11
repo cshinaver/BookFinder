@@ -123,6 +123,12 @@ def get_amazon_books_for_keyword(keyword):
             return
 
         book_price = re.search(r"\$(.*)", price_tag.get_text()).group(1)
+        # There was an error when a range ("44.00 - 44.14") would show up
+        # This takes the higher price
+        if '-' in book_price:
+            book_price = book_price.split(' ')[-1]
+        # Strips '$'
+        book_price = book_price.strip('$')
         new_book.price = Decimal(book_price)
         link = item.attrs['href']
         # Amazon links have weird &amp; in them which breaks them
