@@ -93,25 +93,33 @@ class Book:
         }
 
 
-def get_page_for_amazon_book_search(keyword):
-    search_string = (
-        'http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias'
-        '%3Dstripbooks&field-keywords={search_string}'
-        '&rh=n%3A283155%2Ck%3A{search_string}'.format(
-            search_string=keyword,
+class AmazonScraper:
+    def get_amazon_books_for_keyword(self, keyword):
+        content = self._get_page_for_amazon_book_search(keyword)
+        items = self._get_book_list_items_from_content(content)
+        book_lists = map(self._parse_book_list_item_into_books, items)
+        return [item for sublist in book_lists for item in sublist]
+
+    def _get_page_for_amazon_book_search(self, keyword):
+        search_string = (
+            'http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias'
+            '%3Dstripbooks&field-keywords={search_string}'
+            '&rh=n%3A283155%2Ck%3A{search_string}'.format(
+                search_string=keyword,
+            )
         )
-    )
-    return requests.get(search_string).content
+        return requests.get(search_string).content
 
-
-def get_amazon_books_for_keyword(keyword):
-    def get_book_list_items_from_content(content):
+    def _get_book_list_items_from_content(self, content):
         """ Returns Amazon book items in BeautifulSoup format """
         soup = BeautifulSoup(content, 'html.parser')
-        book_list_items = soup.find_all('li', class_='s-result-item celwidget')
+        book_list_items = soup.find_all(
+            'li',
+            class_='s-result-item celwidget',
+        )
         return book_list_items
 
-    def parse_price_bulk_item_into_book(item, title):
+    def _parse_price_bulk_item_into_book(self, item, title):
         new_book = PurchaseOption()
         price_tag = item.find(
             'span',
@@ -148,7 +156,7 @@ def get_amazon_books_for_keyword(keyword):
 
         return new_book
 
-    def parse_book_list_item_into_books(item):
+    def _parse_book_list_item_into_books(self, item):
         def get_book_type(item):
             text = item.get_text()
             if "$" in text:
@@ -178,16 +186,11 @@ def get_amazon_books_for_keyword(keyword):
             if new_book_type:
                 book_type = new_book_type
                 continue
-            book = parse_price_bulk_item_into_book(item, new_book_title)
+            book = self._parse_price_bulk_item_into_book(item, new_book_title)
             book.book_type = book_type
             if book:
                 new_books.append(book)
         return new_books
-
-    content = get_page_for_amazon_book_search(keyword)
-    items = get_book_list_items_from_content(content)
-    book_lists = map(parse_book_list_item_into_books, items)
-    return [item for sublist in book_lists for item in sublist]
 
 
 def get_Barnes_book_prices_for_isbn(keyword):
