@@ -4,6 +4,7 @@ from flask.views import View
 from bookfinder import app
 from bookfinder.models.book import Book
 from bookfinder.models.purchasechoice import PurchaseChoice
+from bookfinder.models.bookfinderuser import BookfinderUser as User
 
 import json
 from scraper import (
@@ -50,8 +51,9 @@ class UsedOptionList(View):
     def fill_list_by_bookid(self, option_list, book_id):
         def add_to_list(old_list, option):
             if option.isLocalSeller:
+                local_seller = User.get(id=option.local_seller_id)
                 old_list.append({
-                    'seller': option.local_seller_id,
+                    'seller': local_seller.username,
                     'price': option.price,
                     'rental': option.isRental,
                     'book_type': option.type,
