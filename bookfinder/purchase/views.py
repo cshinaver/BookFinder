@@ -17,8 +17,10 @@ class SellBook(View):
             isbn = request.form['ISBN']
             price = request.form['Price']
 
-            isbn, price = self.format_input_data(isbn=isbn, price=price)
-            errors = self.form_error_checking(isbn=isbn, price=price)
+            isbn, price, errors = self.format_input_data(
+                isbn=isbn,
+                price=price,
+            )
             if errors:
                 return self.redirect_to_self_with_errors(errors)
 
@@ -43,10 +45,18 @@ class SellBook(View):
             )
 
     def format_input_data(self, isbn, price):
+        errors = []
+
         # Strip '-'
         isbn = isbn.replace('-', '')
 
-        return isbn, price
+        try:
+            price = "{:.2f}".format(float(price))
+        except ValueError:
+            errors.append('Please enter a valid price (e.g. "$40.00")')
+
+        errors.extend(self.form_error_checking(isbn=isbn, price=price))
+        return isbn, price, errors
 
     def create_and_store_purchase_option(self, temp_book, isbn, price):
         errors = []
