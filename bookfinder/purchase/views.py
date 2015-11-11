@@ -1,7 +1,7 @@
 from flask import render_template, request, flash, redirect, url_for
 from flask.views import View
 from bookfinder import app
-from bookfinder.api.scraper import get_book_object_list_for_book_title
+from bookfinder.api.scraper import get_books_for_book_title_using_google_books
 from bookfinder.purchase.form import SellBookForm
 from bookfinder.models.book import Book
 from bookfinder.models.purchasechoice import PurchaseChoice
@@ -92,7 +92,7 @@ class SellBook(View):
 
     def get_book_from_isbn(self, isbn):
         errors = []
-        book = get_book_object_list_for_book_title('isbn:' + isbn)
+        book = get_books_for_book_title_using_google_books('isbn:' + isbn)
         if not book:
             errors.append('ISBN is invalid')
         return book, errors
