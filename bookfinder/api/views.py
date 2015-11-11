@@ -7,7 +7,6 @@ from bookfinder.models.purchasechoice import PurchaseChoice
 
 import json
 from scraper import (
-    get_books_for_book_title_using_google_books,
     AmazonScraper,
     get_Barnes_book_prices_for_isbn,
     get_google_books_for_isbn,
@@ -19,7 +18,10 @@ def book_query():
     title = request.args.get('title')
     amazon_books = AmazonScraper().get_amazon_books_for_keyword(title)
     # Convert all values to strings
-    book_list = [{key: str(value) for (key, value) in d.iteritems()} for d in amazon_books]
+    book_list = [
+        {key: str(value) for (key, value) in d.iteritems()}
+        for d in amazon_books
+    ]
     json_output = json.dumps(book_list, sort_keys=True, indent=4)
     return json_output
 
