@@ -243,7 +243,11 @@ def get_Barnes_book_prices_for_isbn(keyword):
                 'p',
                 class_='price rental-price',
             ).get_text()  # price
-            new_rental_option.price = rent_price
+            # Sometimes there is ("Rental price Actual price | Save %%")
+            # This strips that out and takes first price
+            rent_price = rent_price.split()[0]
+            rent_price = rent_price.strip('$')
+            new_rental_option.price = Decimal(rent_price)
             rental_type = soup.find('section', id='prodPromo')
             rental_type = rental_type.find('h2').get_text()
             new_rental_option.book_type = rental_type
