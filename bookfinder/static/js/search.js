@@ -22,7 +22,7 @@ function add_book_to_list(book) {
 	//thumbnail:
 	var new_thumb_frame = document.createElement("div");
 	var new_thumb = document.createElement("img");
-	new_thumb.setAttribute("src",book.Thumbnail_link);
+	new_thumb.setAttribute("src",book.thumbnail_link);
 	new_thumb_frame.appendChild(new_thumb);
 	new_thumb_frame.setAttribute("style","float:left;padding-right:10px;");
 	new_entry.appendChild(new_thumb_frame);

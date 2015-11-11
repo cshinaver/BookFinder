@@ -178,6 +178,7 @@ class AmazonScraper:
                 return text
 
         # Title and link contained in link element
+        thumbnail_link = item.find('img').attrs['src'].encode('utf8')
         isbn = item.attrs['data-asin'].encode('utf8')
         # If B in isbn, some kind of amazon special book
         if 'B' in isbn:
@@ -212,6 +213,7 @@ class AmazonScraper:
         # Add isbn
         for book in new_books:
             book['isbn'] = isbn
+            book['thumbnail_link'] = thumbnail_link
         return new_books
 
 
