@@ -109,7 +109,7 @@ class BaseModel:
                 value = getattr(self, prop)
                 if isinstance(value, basestring):
                     values.append("'{value}'".format(value=value))
-                elif not value:
+                elif value is None:
                     values.append('NULL')
                 else:
                     values.append('{value}'.format(value=value))
