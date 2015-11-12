@@ -93,26 +93,47 @@ class Book:
         }
 
 
-def get_page_for_amazon_book_search(keyword):
-    search_string = (
-        'http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias'
-        '%3Dstripbooks&field-keywords={search_string}'
-        '&rh=n%3A283155%2Ck%3A{search_string}'.format(
-            search_string=keyword,
+class AmazonScraper:
+    def get_amazon_purchase_choices_for_keyword(self, keyword):
+        content = self._get_page_for_amazon_book_search(keyword)
+        items = self._get_book_list_items_from_content(content)
+        book_lists = map(self._parse_book_list_item_into_books, items)
+        return [item for sublist in book_lists for item in sublist]
+
+    def get_amazon_books_for_keyword(self, keyword):
+        content = self._get_page_for_amazon_book_search(keyword)
+        items = self._get_book_list_items_from_content(content)
+        book_lists = map(self._parse_book_list_item_into_books, items)
+        books = [item for sublist in book_lists for item in sublist]
+        unique_books = []
+        isbns = set([])
+        for book in books:
+            if book['isbn'] not in isbns:
+                unique_books.append(book)
+                isbns.add(book['isbn'])
+        return unique_books
+
+    def _get_page_for_amazon_book_search(self, keyword):
+        search_string = (
+            'http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias'
+            '%3Dstripbooks&field-keywords={search_string}'
+            '&rh=n%3A283155%2Ck%3A{search_string}'.format(
+                search_string=keyword,
+            )
         )
-    )
-    return requests.get(search_string).content
+        return requests.get(search_string).content
 
-
-def get_amazon_books_for_keyword(keyword):
-    def get_book_list_items_from_content(content):
+    def _get_book_list_items_from_content(self, content):
         """ Returns Amazon book items in BeautifulSoup format """
         soup = BeautifulSoup(content, 'html.parser')
-        book_list_items = soup.find_all('li', class_='s-result-item celwidget')
+        book_list_items = soup.find_all(
+            'li',
+            class_='s-result-item celwidget',
+        )
         return book_list_items
 
-    def parse_price_bulk_item_into_book(item, title):
-        new_book = PurchaseOption()
+    def _parse_price_bulk_item_into_book(self, item, title):
+        new_book = {}
         price_tag = item.find(
             'span',
             class_="a-size-base a-color-price s-price a-text-bold",
@@ -129,13 +150,13 @@ def get_amazon_books_for_keyword(keyword):
             book_price = book_price.split(' ')[-1]
         # Strips '$'
         book_price = book_price.strip('$')
-        new_book.price = Decimal(book_price)
+        new_book['price'] = book_price
         link = item.attrs['href']
         # Amazon links have weird &amp; in them which breaks them
         # Remove anything after the first & arg
-        new_book.link = link[:link.find('&')]
-        new_book.title = title
-        new_book.seller = 'Amazon'
+        new_book['link'] = link[:link.find('&')]
+        new_book['title'] = title
+        new_book['seller'] = 'Amazon'
 
         # determine if is rental
         rent_or_buy_item = item.find(
@@ -144,11 +165,11 @@ def get_amazon_books_for_keyword(keyword):
         )
         if rent_or_buy_item:
             rent_or_buy_text = rent_or_buy_item.get_text()
-            new_book.is_rental = "rent" in rent_or_buy_text
+            new_book['rental'] = "rent" in rent_or_buy_text
 
         return new_book
 
-    def parse_book_list_item_into_books(item):
+    def _parse_book_list_item_into_books(self, item):
         def get_book_type(item):
             text = item.get_text()
             if "$" in text:
@@ -157,11 +178,18 @@ def get_amazon_books_for_keyword(keyword):
                 return text
 
         # Title and link contained in link element
+        thumbnail_link = item.find('img').attrs['src'].encode('utf8')
+        isbn = item.attrs['data-asin'].encode('utf8')
+        # If B in isbn, some kind of amazon special book
+        if 'B' in isbn:
+            return []
         link_item = item.find(
             'a',
             class_="a-link-normal s-access-detail-page a-text-normal",
         )
-        new_book_title = link_item.attrs['title']
+        if not link_item:
+            return []
+        new_book_title = link_item.attrs['title'].encode('utf8')
 
         # Handle pricing for hardcover, Paperback, Kindle Edition, rent
         price_column_item = item.find('div', class_="a-column a-span7")
@@ -178,16 +206,15 @@ def get_amazon_books_for_keyword(keyword):
             if new_book_type:
                 book_type = new_book_type
                 continue
-            book = parse_price_bulk_item_into_book(item, new_book_title)
-            book.book_type = book_type
+            book = self._parse_price_bulk_item_into_book(item, new_book_title)
+            book['book_type'] = book_type
             if book:
                 new_books.append(book)
+        # Add isbn
+        for book in new_books:
+            book['isbn'] = isbn
+            book['thumbnail_link'] = thumbnail_link
         return new_books
-
-    content = get_page_for_amazon_book_search(keyword)
-    items = get_book_list_items_from_content(content)
-    book_lists = map(parse_book_list_item_into_books, items)
-    return [item for sublist in book_lists for item in sublist]
 
 
 def get_Barnes_book_prices_for_isbn(keyword):
@@ -209,7 +236,7 @@ def get_Barnes_book_prices_for_isbn(keyword):
         list_wrapper_item = soup.find('section', id='prodSummary')
         product_info = list_wrapper_item.find('li', class_='tab selected')
         if product_info is None:
-            #if no 'li' element, there are no results, so return a blank list
+            # if no 'li' element, there are no results, so return a blank list
             return []
         item_url_extension = (product_info.find_all('a')[0]).attrs['href']
         item_base = "http://www.barnesandnoble.com"
@@ -232,7 +259,8 @@ def get_Barnes_book_prices_for_isbn(keyword):
 
         new_rental = soup.find('section', id='skuSelection')
         if new_rental is None:
-            #this indicates there is no list of rental options, so return the current list
+            # this indicates there is no list of rental options,
+            # so return the current list
             return list_books
         if(new_rental.find('p', class_='price rental-price')):
             new_rental_option = PurchaseOption()
@@ -375,7 +403,8 @@ def get_google_books_for_isbn(isbn):
         button_text = get_button.text
         button_link = get_button.attrs['href']
         # Button has two possible formats for eBooks.
-        # They should be handled almost the same, so they are separated into boolean variables.
+        # They should be handled almost the same,
+        # so they are separated into boolean variables.
         is_buy_ebook = button_text.startswith('Buy eBook - $')
         is_ebook_from = button_text.startswith('EBOOK FROM $')
         if (is_buy_ebook or is_ebook_from):
@@ -402,7 +431,8 @@ def get_google_books_for_isbn(isbn):
             option.is_rental = False
             option.purchaseID = ''
             option_list.append(option)
-        # a "Get print book" link provides a link to a list of prices, so load that page.
+        # a "Get print book" link provides a link to a list of prices,
+        # so load that page.
         elif button_text == 'Get print book':
             option_list = extract_google_books_price_list_from_link(
                 button_link,
@@ -430,7 +460,7 @@ def get_google_books_for_isbn(isbn):
 
     link = get_google_books_page_link_for_isbn(isbn)
     if link is None:
-        #there are no search results for this isbn, so return blank list
+        # there are no search results for this isbn, so return blank list
         return []
     return extract_google_books_prices_from_page_link(link)
 
@@ -467,16 +497,17 @@ def get_book_object_for_book_title(title):
     response = requests.get(url).json()
 
     # For now, just pull top item. Might change later
-    if not 'items' in response:
+    if 'items' not in response:
         return -1
 
     top_item = response['items'][0]
     book = get_book_info_from_book_item(top_item)
     return book
-    #return [] for josh's code
+    # return [] for josh's code
 
 
-def get_book_object_list_for_book_title(title):
+def get_books_for_book_title_using_google_books(title):
+    """ Uses Google Books api in order to get books by title """
     def get_book_info_from_book_item(item):
         book = Book()
         volume_info = item['volumeInfo']
@@ -489,7 +520,7 @@ def get_book_object_list_for_book_title(title):
         # handle multiple authors by comma-delimiting them
         for author in authors:
             if book.author != author:
-                book.author+= (', '+author)
+                book.author += (', '+author)
         image_links = volume_info.get(
             'imageLinks'
         )
@@ -497,31 +528,31 @@ def get_book_object_list_for_book_title(title):
             book.thumbnail_link = image_links.get('thumbnail')
 
         if 'industryIdentifiers' not in volume_info:
-            #there is no ISBN specified - return nothing
+            # there is no ISBN specified - return nothing
             return None
         identifiers = volume_info['industryIdentifiers']
         # if there is only 1 identifier, don't use this book option
-        if len(identifiers)==0:
-            #there is no ISBN specified - return nothing
+        if len(identifiers) == 0:
+            # there is no ISBN specified - return nothing
             return None
-        elif len(identifiers)==1:
-            #there is one ISBN specified
+        elif len(identifiers) == 1:
+            # there is one ISBN specified
             book.isbn = (
                 identifiers[0]['identifier']
             )
         else:
-            #there are multiple ISBNs specified
-            #get list of all ISBNs to sort through
+            # there are multiple ISBNs specified
+            # get list of all ISBNs to sort through
             all_isbns = []
             for identif in identifiers:
                 all_isbns.append(identif['identifier'])
-            #iterate through list of ISBNs to get 13-character version
+            # iterate through list of ISBNs to get 13-character version
             isbn_13_found = False
             for ISBN in all_isbns:
-                if len(ISBN)==13:
+                if len(ISBN) == 13:
                     book.isbn = ISBN
                     isbn_13_found = True
-            #if none found, default to the first element
+            # if none found, default to the first element
             if not isbn_13_found:
                 book.isbn = (
                     identifiers[0]['identifier']
@@ -547,5 +578,3 @@ def get_book_object_list_for_book_title(title):
         if book is not None:
             books.append(book)
     return books
-
-
