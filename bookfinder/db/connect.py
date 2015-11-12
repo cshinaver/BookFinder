@@ -42,7 +42,9 @@ def init_db():
                 remoteSellerName varchar(30),
                 book_id int,
                 foreign key (book_id) references Book(id),
-                foreign key (local_seller_id) references BookfinderUser(id)
+                foreign key (local_seller_id)
+                references BookfinderUser(id)
+                on delete cascade
             );
         '''
     )
