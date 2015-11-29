@@ -4,6 +4,7 @@
             [compojure.route :as route]
             [clojure.java.io :as io]
             [ring.adapter.jetty :as jetty]
+            [bookrecommender.mahout :as mahout]
             [environ.core :refer [env]]))
 
 (defn splash []
