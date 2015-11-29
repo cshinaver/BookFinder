@@ -14,9 +14,9 @@
 
 (defroutes app
   (GET "/" []
-       (splash))
+    (splash))
   (ANY "*" []
-       (route/not-found (slurp (io/resource "404.html")))))
+    (route/not-found (slurp (io/resource "404.html")))))
 
 (defn -main [& [port]]
   (let [port (Integer. (or port (env :port) 5000))]
