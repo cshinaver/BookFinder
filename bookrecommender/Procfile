@@ -1,0 +1,1 @@
+web: java $JVM_OPTS -cp target/bookrecommender-standalone.jar clojure.main -m bookrecommender.web
