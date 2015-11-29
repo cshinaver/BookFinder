@@ -14,9 +14,4 @@
         similarity (TanimotoCoefficientSimilarity. model)
         neighborhood (ThresholdUserNeighborhood. 0.1, similarity, model)
         recommender (GenericBooleanPrefUserBasedRecommender. model, neighborhood, similarity)]
-    (.recommend recommender user-id num-recommendations)
-))
-
-(map
-  #(hash-map :item-id (.getItemID %) :value (.getValue %))
-  (recommend "book.csv" 2 3))
+    (.recommend recommender user-id num-recommendations)))
