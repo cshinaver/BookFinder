@@ -14,11 +14,6 @@
    [java.util ArrayList]
    [java.io File]))
 
-(def datastuff (vector
-                (hash-map :user_id 1 :preferences '[5 6 7])
-                (hash-map :user_id 2 :preferences '[4 6 7])
-                (hash-map :user_id 3 :preferences '[2 5 7])))
-
 (defn recommend [user-id num-recommendations data]
   (map
    #(hash-map :item_id (.getItemID %) :value (.getValue %))
@@ -28,7 +23,6 @@
           neighborhood (ThresholdUserNeighborhood. 0.1, similarity, model)
           recommender (GenericBooleanPrefUserBasedRecommender. model, neighborhood, similarity)]
       (.recommend recommender user-id num-recommendations)))))
-(recommend 2 1 datastuff)
 
 (defn- create-data-model [data]
   (GenericDataModel.
