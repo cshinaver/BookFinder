@@ -14,11 +14,12 @@
    :body (pr-str ["Hello" :from 'Heroku])})
 
 (defn get-recommendation [request]
-  {
-   :status 200
+  {:status 200
    :headers {"Content-Type" "text/plain"}
-   :body (pr-str ["Sup " (get (:params request) :name)])
-   })
+   :body (let [params (:params request)
+               user_id (Integer. (re-find #"\d+" (get params :user_id)))
+               number_of_preferences (Integer. (re-find #"\d+" (get params :number_of_preferences)))]
+           (mahout/json-recommend user_id number_of_preferences))})
 
 (defroutes app
   (GET "/" []

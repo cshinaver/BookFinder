@@ -1,5 +1,7 @@
 (ns bookrecommender.mahout
-  (:require [bookrecommender.db :as db])
+  (:require
+   [bookrecommender.db :as db]
+   [clojure.data.json :as json])
   (:import
    [org.apache.mahout.cf.taste.impl.model.file FileDataModel]
    [org.apache.mahout.cf.taste.impl.neighborhood ThresholdUserNeighborhood]
@@ -40,3 +42,6 @@
           neighborhood (ThresholdUserNeighborhood. 0.1, similarity, model)
           recommender (GenericBooleanPrefUserBasedRecommender. model, neighborhood, similarity)]
       (.recommend recommender user-id num-recommendations)))))
+
+(defn json-recommend [user-id num-recommendations]
+  (json/write-str (recommend user-id num-recommendations)))
