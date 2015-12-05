@@ -1,8 +1,10 @@
 (ns bookrecommender.db
   (:require
-   [clojure.java.jdbc :as db]))
+   [clojure.java.jdbc :as db]
+   [bookrecommender.config :as config]
+   ))
 
-(let [db-host "localhost"
+(let [db-host (:database-url config/config)
       db-port 5432
       db-name "test"]
   (def db-spec {:subprotocol "postgresql"

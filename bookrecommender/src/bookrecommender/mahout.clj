@@ -1,7 +1,9 @@
 (ns bookrecommender.mahout
   (:require
    [bookrecommender.db :as db]
-   [clojure.data.json :as json])
+   [clojure.data.json :as json]
+   [bookrecommender.config :as config]
+   )
   (:import
    [org.apache.mahout.cf.taste.impl.model.file FileDataModel]
    [org.apache.mahout.cf.taste.impl.neighborhood ThresholdUserNeighborhood]
