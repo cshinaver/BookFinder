@@ -1,4 +1,5 @@
 (ns bookrecommender.mahout
+  (:require [bookrecommender.db :as db])
   (:import
    [org.apache.mahout.cf.taste.impl.model.file FileDataModel]
    [org.apache.mahout.cf.taste.impl.neighborhood ThresholdUserNeighborhood]
@@ -30,11 +31,11 @@
          (.put id-map user-id prefs-array)))
      id-map)))
 
-(defn recommend [user-id num-recommendations data]
+(defn recommend [user-id num-recommendations]
   (map
    #(hash-map :item_id (.getItemID %) :value (.getValue %))
    (vec
-    (let [model (create-data-model data)
+    (let [model (create-data-model (db/get-recommendation-data))
           similarity (TanimotoCoefficientSimilarity. model)
           neighborhood (ThresholdUserNeighborhood. 0.1, similarity, model)
           recommender (GenericBooleanPrefUserBasedRecommender. model, neighborhood, similarity)]
