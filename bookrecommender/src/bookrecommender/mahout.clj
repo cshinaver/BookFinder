@@ -14,16 +14,6 @@
    [java.util ArrayList]
    [java.io File]))
 
-(defn recommend [user-id num-recommendations data]
-  (map
-   #(hash-map :item_id (.getItemID %) :value (.getValue %))
-   (vec
-    (let [model (create-data-model data)
-          similarity (TanimotoCoefficientSimilarity. model)
-          neighborhood (ThresholdUserNeighborhood. 0.1, similarity, model)
-          recommender (GenericBooleanPrefUserBasedRecommender. model, neighborhood, similarity)]
-      (.recommend recommender user-id num-recommendations)))))
-
 (defn- create-data-model [data]
   (GenericDataModel.
    (let [id-map (FastByIDMap.)]
@@ -39,3 +29,13 @@
                   prefs-array)) user-hash)]
          (.put id-map user-id prefs-array)))
      id-map)))
+
+(defn recommend [user-id num-recommendations data]
+  (map
+   #(hash-map :item_id (.getItemID %) :value (.getValue %))
+   (vec
+    (let [model (create-data-model data)
+          similarity (TanimotoCoefficientSimilarity. model)
+          neighborhood (ThresholdUserNeighborhood. 0.1, similarity, model)
+          recommender (GenericBooleanPrefUserBasedRecommender. model, neighborhood, similarity)]
+      (.recommend recommender user-id num-recommendations)))))
