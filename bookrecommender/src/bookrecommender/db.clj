@@ -1,16 +1,18 @@
 (ns bookrecommender.db
   (:require
    [clojure.java.jdbc :as db]
-   [bookrecommender.config :as config]
-   ))
+   [bookrecommender.config :as config]))
 
-(let [db-host (:database-url config/config)
-      db-port 5432
-      db-name "test"]
+(let [db-user (:db-user config/config)
+      db-pass (:db-pass config/config)
+      db-host (:db-host config/config)
+      db-port (:db-port config/config)
+      db-name (:db-name config/config)]
   (def db-spec {:subprotocol "postgresql"
                 :subname (str "//" db-host ":" db-port "/" db-name)
-                :user "postgres"
-                :password "test"}))
+                :user db-user
+                :password db-pass
+}))
 
 (defn get-recommendation-data []
   (let [raw-data (group-by :user_id (db/query db-spec ["select * from BooksViewed"]))
