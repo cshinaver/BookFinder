@@ -46,6 +46,13 @@ def init_db():
                 references BookfinderUser(id)
                 on delete cascade
             );
+            create table BooksViewed(
+                id serial primary key,
+                book_id int,
+                foreign key (book_id) references Book(id),
+                user_id int,
+                foreign key (user_id) references BookfinderUser(id)
+            );
         '''
     )
 
@@ -53,6 +60,7 @@ def init_db():
     app.logger.debug('Table "Book" created')
     app.logger.debug('Table "PurchaseChoice" created')
     app.logger.debug('Table "BookfinderUser" created')
+    app.logger.debug('Table "BooksViewed" created')
 
 
 def flush_db():
