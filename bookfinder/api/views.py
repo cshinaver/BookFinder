@@ -1,8 +1,12 @@
 from flask import request
+from flask.ext.login import (
+    current_user,
+)
 from flask.views import View
 
 from bookfinder import app
 from bookfinder.models.book import Book
+from bookfinder.models.booksviewed import BooksViewed
 from bookfinder.models.purchasechoice import PurchaseChoice
 from bookfinder.models.bookfinderuser import BookfinderUser as User
 
@@ -50,6 +54,10 @@ class UsedOptionList(View):
 
     def fill_list_by_bookid(self, option_list, book_id):
         def add_to_list(old_list, option):
+            if not option:
+                return old_list
+            elif not option.price:
+                return old_list
             option.price = "{:.2f}".format(float(option.price))
             if option.isLocalSeller:
                 local_seller = User.get(id=option.local_seller_id)
@@ -79,6 +87,37 @@ class UsedOptionList(View):
         else:
             option_list = add_to_list(option_list, query_return)
         return option_list
+
+
+@app.route('/api/set_user_recommendation/', methods=['POST'])
+def set_user_recommendation():
+    """
+    params: book_isbn
+    """
+    user_id = current_user.id
+    book_isbn = request.form.get('book_isbn')
+    book = Book.get(isbn=book_isbn)
+
+    if not book:
+        amazon_book = AmazonScraper().get_amazon_books_for_keyword(
+            book_isbn,
+        )[0]
+        book = Book()
+        book.isbn = book_isbn
+        if 'title' in amazon_book:
+            book.title = amazon_book['title']
+        if 'author' in amazon_book:
+            book.author = amazon_book['author']
+        book.save()
+
+    existing_bv = BooksViewed.get(user_id=user_id, book_id=book.id)
+    if not existing_bv:
+        bv = BooksViewed()
+        bv.user_id = user_id
+        bv.book_id = book.id
+        bv.save()
+
+    return 'Book View added successfulsly'
 
 
 @app.route('/api/comparison_option_list/')
