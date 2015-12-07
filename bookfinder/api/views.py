@@ -12,7 +12,6 @@ from bookfinder.models.bookfinderuser import BookfinderUser as User
 
 import json
 from scraper import (
-    get_books_for_book_title_using_google_books,
     AmazonScraper,
     get_Barnes_book_prices_for_isbn,
     get_google_books_for_isbn,
@@ -100,7 +99,7 @@ def set_user_recommendation():
     book = Book.get(isbn=book_isbn)
 
     if not book:
-        google_book = get_books_for_book_title_using_google_books(
+        amazon_book = AmazonScraper().get_amazon_books_for_keyword(
             book_isbn,
         )[0]
         book = Book()
