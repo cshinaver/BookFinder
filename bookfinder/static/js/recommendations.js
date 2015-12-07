@@ -21,7 +21,7 @@ function add_suggestion_to_list(book_info) {
                 if(book_list.length) {
                     var book = book_list[1];
                     document.getElementById("recommendations").style.display="block";
-					add_item_to_list(book,"recommendation-list");
+                    add_item_to_list(book,"recommendation-list");
                 }
             });
         }
