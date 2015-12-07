@@ -20,6 +20,16 @@ function get_used_option_list(query) {
 	});
 }
 
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1);
+        if (c.indexOf(name) === 0) return c.substring(name.length,c.length);
+    }
+    return "";
+}
 
 function get_comparison_option_list(query) {
 	get_file('/api/comparison_option_list/?isbn=' + query, function(text) {
@@ -34,6 +44,17 @@ function get_comparison_option_list(query) {
 		} else { // doesn't seem to be working
 			document.getElementById("comparison-list").innerHTML = "Sorry. There are no Book results for isbn number " + query + ".";
 		}
+
+		// Reload jquery watches
+        $("a").click(function(e) {
+            var isbn = getCookie("isbn");
+            $.post("/api/set_user_recommendation/",
+                {
+                    book_isbn: isbn
+                },
+                function (data, status) {
+            });
+        });
 	});
 }
 
