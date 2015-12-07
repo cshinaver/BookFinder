@@ -104,8 +104,10 @@ def set_user_recommendation():
         )[0]
         book = Book()
         book.isbn = book_isbn
-        book.title = google_book.title
-        book.author = google_book.author
+        if 'title' in amazon_book:
+            book.title = amazon_book['title']
+        if 'author' in amazon_book:
+            book.author = amazon_book['author']
         book.save()
 
     existing_bv = BooksViewed.get(user_id=user_id, book_id=book.id)
