@@ -1,8 +1,12 @@
 from flask import request
+from flask.ext.login import (
+    current_user,
+)
 from flask.views import View
 
 from bookfinder import app
 from bookfinder.models.book import Book
+from bookfinder.models.booksviewed import BooksViewed
 from bookfinder.models.purchasechoice import PurchaseChoice
 from bookfinder.models.bookfinderuser import BookfinderUser as User
 
@@ -79,6 +83,29 @@ class UsedOptionList(View):
         else:
             option_list = add_to_list(option_list, query_return)
         return option_list
+
+
+@app.route('/api/set_user_recommendation/', methods=['POST'])
+def set_user_recommendation():
+    """
+    params: book_isbn
+    """
+    user_id = current_user.id
+    book_isbn = request.form.get('book_isbn')
+    book = Book.get(isbn=book_isbn)
+    if not book:
+        book = Book()
+        book.isbn = book_isbn
+        book.save()
+
+    existing_bv = BooksViewed.get(user_id=user_id, book_id=book.id)
+    if not existing_bv:
+        bv = BooksViewed()
+        bv.user_id = user_id
+        bv.book_id = book.id
+        bv.save()
+
+    return 'Book View added successfulsly'
 
 
 @app.route('/api/comparison_option_list/')
