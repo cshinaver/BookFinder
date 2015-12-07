@@ -54,6 +54,10 @@ class UsedOptionList(View):
 
     def fill_list_by_bookid(self, option_list, book_id):
         def add_to_list(old_list, option):
+            if not option:
+                return old_list
+            elif not option.price:
+                return old_list
             option.price = "{:.2f}".format(float(option.price))
             if option.isLocalSeller:
                 local_seller = User.get(id=option.local_seller_id)
