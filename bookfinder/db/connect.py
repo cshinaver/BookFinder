@@ -21,7 +21,7 @@ def init_db():
         '''
             create table Book(
                 id serial primary key,
-                title varchar(50),
+                title varchar(200),
                 ISBN varchar(13) unique,
                 author varchar(100)
             );
