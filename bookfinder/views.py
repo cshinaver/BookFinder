@@ -2,6 +2,7 @@ from flask import render_template, send_from_directory
 
 from bookfinder import app
 from bookfinder.models.book import Book
+from bookfinder.db.connect import execute_sql_query
 
 
 @app.route('/')
@@ -11,7 +12,19 @@ def index():
 
 @app.route('/all_books')
 def all_books():
-    books = Book.all()
+    # Get books only
+    ls = execute_sql_query(
+        """
+            select distinct on (book_id) * from purchasechoice
+            inner join book on (book.id = purchasechoice.book_id);
+        """
+    )
+    books = []
+    for b in ls:
+        book = Book()
+        book.title = b[-3]
+        book.author = b[-1]
+        books.append(book)
     return render_template('all_books.html', books=books)
 
 
