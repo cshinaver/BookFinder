@@ -12,7 +12,6 @@ function get_suggestion_list(user_id, count) {
 
 function add_suggestion_to_list(book_info) {
     var book_id = book_info.item_id;
-    //alert(book_id);
     get_file('/api/book_info/?id='+book_id, function(text) {
         if(text!="") {
             var book_data = JSON.parse(text);
@@ -20,8 +19,9 @@ function add_suggestion_to_list(book_info) {
             get_file('/api/books_list/?title=isbn:'+isbn, function(text) {
                 var book_list = JSON.parse(text);
                 if(book_list.length) {
-                    var book = book_list[1]
-                    add_item_to_list(book,"recommendation-list");
+                    var book = book_list[1];
+                    document.getElementById("recommendations").style.display="block";
+					add_item_to_list(book,"recommendation-list");
                 }
             });
         }

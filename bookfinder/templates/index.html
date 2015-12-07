@@ -18,10 +18,8 @@
                 </div>
             </div>
         </form>
-        <div id="recommendations">
-        {% if current_user.is_authenticated %}
+        <div id="recommendations" style="display:none;">
         <h3>Some Recommended books for you:</h3>
-        {% endif %}
         <div id="recommendation-list" class="list-group"></div>
         </div>
     </div>
