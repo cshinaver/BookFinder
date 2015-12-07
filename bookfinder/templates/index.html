@@ -19,7 +19,9 @@
             </div>
         </form>
         <div id="recommendations">
+        {% if current_user.is_authenticated %}
         <h3>Some Recommended books for you:</h3>
+        {% endif %}
         <div id="recommendation-list" class="list-group"></div>
         </div>
     </div>
