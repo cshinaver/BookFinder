@@ -7,6 +7,7 @@ from bookfinder.models.purchasechoice import PurchaseChoice
 from bookfinder.models.bookfinderuser import BookfinderUser as User
 
 import json
+import requests
 from scraper import (
     AmazonScraper,
     get_Barnes_book_prices_for_isbn,
@@ -24,6 +25,24 @@ def book_query():
         for d in amazon_books
     ]
     json_output = json.dumps(book_list, sort_keys=True, indent=4)
+    return json_output
+
+
+@app.route('/api/recommend_list/')
+def recommend_list():
+    number_of_preferences = request.args.get('number_of_preferences')
+    user_id = request.args.get('user_id')
+    content = requests.post("http://bookfinderrecommender.herokuapp.com/get-recommendation", data = {"user_id":user_id, "number_of_preferences":number_of_preferences}).content
+    return content
+
+
+@app.route('/api/book_info/')
+def book_info():
+    id = request.args.get('id')
+    book_data = Book.get(id=id)
+    if book_data is None:
+        return ""
+    json_output = json.dumps(book_data.__dict__, sort_keys=True, indent=4);
     return json_output
 
 

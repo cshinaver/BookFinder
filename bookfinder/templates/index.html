@@ -18,5 +18,20 @@
 				</div>
 			</div>
 		</form>
+		<div id="recommendations">
+		<h3>Some Recommended books for you:</h3>
+		<div id="recommendation-list" class="list-group"></div>
+		</div>
 	</div>
+{% endblock %}
+{% block footer %}
+    {{ super() }}
+	<script src="/static/js/get-file.js"></script>
+	<script src="/static/js/book-list.js"></script>
+	<script src="/static/js/recommendations.js"></script>
+	<script>
+		{% if current_user.is_authenticated %}
+		get_suggestion_list({{ current_user.id }},10);
+		{% endif %}
+	</script>
 {% endblock %}
