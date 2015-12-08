@@ -3,8 +3,11 @@ function get_suggestion_list(user_id, count) {
         book_list = JSON.parse(text);
         var num_books = book_list.length;
         if(num_books) {
+            var sorted_books = book_list.sort(function(a,b) {
+                return b.value - a.value;
+            });
             for(var i = 0; i < num_books; i++) {
-                add_suggestion_to_list(book_list[i]);
+                add_suggestion_to_list(sorted_books[i]);
             }
         }
     });
