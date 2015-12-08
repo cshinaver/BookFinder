@@ -1,4 +1,5 @@
 import csv
+import sys
 
 from bookfinder.models.book import Book
 from bookfinder.models.purchasechoice import PurchaseChoice
@@ -6,8 +7,9 @@ from bookfinder.api.scraper import get_book_object_list_for_book_title
 from bookfinder import app
 from random import randint
 
-def load_csv():
-    f = open('ISBN_data.csv')
+
+def load_csv(filename):
+    f = open(filename)
     csv_f = csv.reader(f)
     for row in csv_f:
         print row
@@ -46,3 +48,10 @@ def load_csv():
 	        p.local_seller_id = userID # change to user once login is created
 	        p.isLocalSeller = True
 
+if __name__ == '__main__':
+    if len(sys.argv) == 1:
+        print "Please pass CSV filename to script"
+        exit(1)
+
+    filename = sys.argv[1]
+    load_csv(filename)
