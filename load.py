@@ -1,5 +1,6 @@
 import csv
 import sys
+from uuid import uuid4
 
 from bookfinder.models.book import Book
 from bookfinder.models.purchasechoice import PurchaseChoice
@@ -14,6 +15,8 @@ def load_csv(filename):
     f = open(filename)
     csv_f = csv.reader(f)
     newUser = "dummy"
+    current_user_id = None
+    current_row_id = None
     for row in csv_f:
         print row
 
@@ -73,12 +76,13 @@ def load_csv(filename):
             p.save()
 
             booksV = BooksViewed()
-            if userID[0]=='-':    #if first user in list signified by '-'' sign, create new user
-                #print userID[1:]
-                uID=userID[1:]
-                newUser = User(username=userID[1:], password=userID[1:]) #password = userID
+            if userID != current_row_id:
+                newUser = User(username=str(uuid4())[:20], password="test")
+                newUser.save()
+                current_user_id = newUser.id
+                current_row_id = userID
 
-            booksV.user_id = uID
+            booksV.user_id = current_user_id
             booksV.book_id = b.id
             booksV.save()
 
