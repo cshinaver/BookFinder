@@ -1,22 +1,37 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-	<div id="page-body" class="container">
-		<form role="search" action="/search/">
-			<div class="form-group">
-				<label class="control-label">Book Search</label>
-				<div class="input-group">
-					<input
+    <div id="page-body" class="container">
+        <form role="search" action="/search/">
+            <div class="form-group">
+                <label class="control-label">Book Search</label>
+                <div class="input-group">
+                    <input
                         id="main-search-bar_text"
                         class="form-control"
                         type="text"
                         name="title"
                         placeholder="Title">
-					<span class="input-group-btn">
-						<button class="btn btn-default" type="submit">Search</button>
-					</span>
-				</div>
-			</div>
-		</form>
-	</div>
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit">Search</button>
+                    </span>
+                </div>
+            </div>
+        </form>
+        <div id="recommendations" style="display:none;">
+        <h3>Some Recommended books for you:</h3>
+        <div id="recommendation-list" class="list-group"></div>
+        </div>
+    </div>
+{% endblock %}
+{% block footer %}
+    {{ super() }}
+    <script src="/static/js/get-file.js"></script>
+    <script src="/static/js/book-list.js"></script>
+    <script src="/static/js/recommendations.js"></script>
+    <script>
+        {% if current_user.is_authenticated %}
+        get_suggestion_list({{ current_user.id }},10);
+        {% endif %}
+    </script>
 {% endblock %}
