@@ -21,9 +21,10 @@ def init_db():
         '''
             create table Book(
                 id serial primary key,
-                title varchar(50),
+                title varchar(200),
                 ISBN varchar(13) unique,
-                author varchar(100)
+                author varchar(100),
+                thumbnail_link varchar(200)
             );
             create table BookfinderUser(
                 id serial primary key,
@@ -46,6 +47,13 @@ def init_db():
                 references BookfinderUser(id)
                 on delete cascade
             );
+            create table BooksViewed(
+                id serial primary key,
+                book_id int,
+                foreign key (book_id) references Book(id),
+                user_id int,
+                foreign key (user_id) references BookfinderUser(id)
+            );
         '''
     )
 
@@ -53,6 +61,7 @@ def init_db():
     app.logger.debug('Table "Book" created')
     app.logger.debug('Table "PurchaseChoice" created')
     app.logger.debug('Table "BookfinderUser" created')
+    app.logger.debug('Table "BooksViewed" created')
 
 
 def flush_db():

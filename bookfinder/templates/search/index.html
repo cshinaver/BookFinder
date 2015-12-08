@@ -1,32 +1,33 @@
 {% extends "base.html" %}
 {% block title %}Search{% endblock %}
 {% block content %}
-	<div id="page-body" class="container">
-		<form role="search" action="/search/">
-			<div class="form-group">
-				<label class="control-label">Book Search</label>
-				<div class="input-group">
-					<input id="main-search-bar_text" class="form-control" type="text" name="title" placeholder="Title">
-					<span class="input-group-btn">
-						<button class="btn btn-default" type="submit">Search</button>
-					</span>
-				</div>
-			</div>
-		</form>
-		<div id="result-list" class="list-group">
-			<a class="list-group-item">
-				<h4 class="list-group-item-heading">Please Wait...</h4>
-				<p class="list-group-item-text">Downloading search results.</p>
-			</a>
-		</div>
-	</div>
+    <div id="page-body" class="container">
+        <form role="search" action="/search/">
+            <div class="form-group">
+                <label class="control-label">Book Search</label>
+                <div class="input-group">
+                    <input id="main-search-bar_text" class="form-control" type="text" name="title" placeholder="Title">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit">Search</button>
+                    </span>
+                </div>
+            </div>
+        </form>
+        <div id="result-list" class="list-group">
+            <a class="list-group-item">
+                <h4 class="list-group-item-heading">Please Wait...</h4>
+                <p class="list-group-item-text">Downloading search results.</p>
+            </a>
+        </div>
+    </div>
 {% endblock %}
 {% block footer %}
     {{ super() }}
-	<script src="/static/js/get-file.js"></script>
-	<script src="/static/js/search.js"></script>
-	<script>
-		fill_search('{{ args.title }}');
-		get_book_list('{{ args.title }}');
-	</script>
+    <script src="/static/js/get-file.js"></script>
+    <script src="/static/js/book-list.js"></script>
+    <script src="/static/js/search.js"></script>
+    <script>
+        fill_search('{{ args.title }}');
+        get_book_list('{{ args.title }}');
+    </script>
 {% endblock %}
