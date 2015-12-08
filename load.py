@@ -5,7 +5,6 @@ from bookfinder.models.book import Book
 from bookfinder.models.purchasechoice import PurchaseChoice
 from bookfinder.api.scraper import get_books_for_book_title_using_google_books
 from bookfinder.api.scraper import AmazonScraper
-#from bookfinder.api.scraper import get_amazon_purchase_choices_for_keyword
 from random import randint
 
 
@@ -26,9 +25,6 @@ def load_csv(filename):
                     'isbn:' + ISBN_load
                     )
             if len(temp_arr) == 0:
-                #print "skipping ISBN: "+ISBN_load
-                #continue
-                #print "try amazon"
                 AZ = AmazonScraper()
                 amazon_dict = AZ.get_amazon_purchase_choices_for_keyword(ISBN_load)
                 if len(amazon_dict) == 0:
@@ -41,7 +37,6 @@ def load_csv(filename):
                 temp_book.thumbnail_link = amazon_dict[0].get('thumbnail_link')
                 temp_book.subtitle = ''
                 temp_arr.append(temp_book)
-                #continue
 
             temp_var = temp_arr[0]
             b.isbn = temp_var.isbn
@@ -62,7 +57,6 @@ def load_csv(filename):
             else:
                 b.id = query_book.id
 
-            #print "author "+b.author
             # Make purchase choice
             p = PurchaseChoice()
             p.id = b.id
