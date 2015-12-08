@@ -90,11 +90,12 @@ def load_csv(filename):
     # keep track of isbns to retry
     isbns_to_retry = []
     for row in csv_f:
-        print row
-
         if len(row) != 0:
+            print row
             row_id = row[0]
             isbn = row[1]
+        else:
+            continue
 
         # Same user for given set of lines
         if current_user_id != row_id:
