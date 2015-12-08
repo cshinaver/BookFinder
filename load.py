@@ -87,6 +87,7 @@ def load_csv(filename):
     csv_f = csv.reader(f)
     newUser = "dummy"
     current_user_id = None
+    current_row_id = None
     # keep track of isbns to retry
     isbns_to_retry = []
     for row in csv_f:
@@ -98,10 +99,11 @@ def load_csv(filename):
             continue
 
         # Same user for given set of lines
-        if current_user_id != row_id:
+        if current_row_id != row_id:
             newUser = User(username=str(uuid4())[:20], password="test")
             newUser.save()
             current_user_id = newUser.id
+            current_row_id = row_id
 
         store_book_info_for_user_and_isbn(
             current_user_id,
