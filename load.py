@@ -58,7 +58,7 @@ def load_csv(filename):
             else:
                 b.id = query_book.id
 
-            print "author "+b.author
+            #print "author "+b.author
             # Make purchase choice
             p = PurchaseChoice()
             p.id = b.id
