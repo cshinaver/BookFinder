@@ -13,7 +13,7 @@ from bookfinder.login.views import User
 def load_csv(filename):
     f = open(filename)
     csv_f = csv.reader(f)
-    newUser = "dummyUSER"
+    newUser = "dummy"
     for row in csv_f:
         print row
 
@@ -75,8 +75,10 @@ def load_csv(filename):
             booksV = BooksViewed()
             if userID[0]=='-':    #if first user in list signified by '-'' sign, create new user
                 #print userID[1:]
+                uID=userID[1:]
                 newUser = User(username=userID[1:], password=userID[1:]) #password = userID
-            booksV.user_id = newUser
+
+            booksV.user_id = uID
             booksV.book_id = b.id
             booksV.save()
 
