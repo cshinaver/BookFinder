@@ -1,52 +1,52 @@
 {% extends "base.html" %}
 {% block title %}Prices{% endblock %}
 {% block content %}
-	<div id="page-body" class="container">
-		<h4><b>Bookfinder Sellers</b></h4>
-		<table id="used-list" class="table table-striped table-hover">
-			<thead id="used-list-head" style="display:none">
-				<tr>
-					<th>Seller</th>
+    <div id="page-body" class="container">
+        <h4><b>Bookfinder Sellers</b></h4>
+        <table id="used-list" class="table table-striped table-hover">
+            <thead id="used-list-head" style="display:none">
+                <tr>
+                    <th>Seller</th>
                     <th><div align="center">Type</div></th>
                     <th><div align="center">Rental</div></th>
                     <th><div align="right">Price</div></th>
-				</tr>
-			</thead>
-			<tbody id="used-list-body">
-				<tr>
-					<td>
-						<h4>Please Wait...</h4>
-						<p>Downloading search results.</p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<h4><b>Outside Sellers</b></h4>
-		<table id="comparison-list" class="table table-striped table-hover">
-			<thead id="comparison-list-head" style="display:none">
-				<tr>
-					<th>Seller</th>
+                </tr>
+            </thead>
+            <tbody id="used-list-body">
+                <tr>
+                    <td>
+                        <h4>Please Wait...</h4>
+                        <p>Downloading search results.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <h4><b>Outside Sellers</b></h4>
+        <table id="comparison-list" class="table table-striped table-hover">
+            <thead id="comparison-list-head" style="display:none">
+                <tr>
+                    <th>Seller</th>
                     <th><div align="center">Type</div></th>
                     <th><div align="center">Rental</div></th>
                     <th><div align="right">Price</div></th>
-				</tr>
-			</thead>
-			<tbody id="comparison-list-body">
-				<tr>
-					<td>
-						<h4>Please Wait...</h4>
-						<p>Downloading search results.</p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
+                </tr>
+            </thead>
+            <tbody id="comparison-list-body">
+                <tr>
+                    <td>
+                        <h4>Please Wait...</h4>
+                        <p>Downloading search results.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
 {% block footer %}
     {{ super() }}
-	<script src="/static/js/get-file.js"></script>
-	<script src="/static/js/prices.js"></script>
-	<script>
-		get_option_list('{{ isbn }}');
-	</script>
+    <script src="/static/js/get-file.js"></script>
+    <script src="/static/js/prices.js"></script>
+    <script>
+        get_option_list('{{ isbn }}');
+    </script>
 {% endblock %}

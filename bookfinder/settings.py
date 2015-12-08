@@ -19,6 +19,7 @@ class ProductionConfig(Config):
         DATABASE_PASSWORD = url.password
         DATABASE_HOST = url.hostname
         DATABASE_PORT = url.port
+        RECOMMENDATION_ENGINE_URL = "http://bookfinderrecommender.herokuapp.com"
 
 
 class DevelopmentConfig(Config):
@@ -28,4 +29,5 @@ class DevelopmentConfig(Config):
     DATABASE_PASSWORD = "test"
     DATABASE_NAME = "test"
     DATABASE_PORT = 5432
+    RECOMMENDATION_ENGINE_URL = "http://localhost:5000"
 
