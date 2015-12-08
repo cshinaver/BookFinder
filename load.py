@@ -31,35 +31,34 @@ def load_csv(filename):
                     isbn=ISBN_load
             )  # check if Book object is already in DB
             if not query_book:
-                #temp_arr = get_books_for_book_title_using_google_books(
-                        #'isbn: ' + ISBN_load
-                        #)
-                #if len(temp_arr) == 0:
-                AZ = AmazonScraper()
-                amazon_dict = AZ.get_amazon_purchase_choices_for_keyword("isbn: "+ISBN_load)
-                if len(amazon_dict) == 0:
-                    print "skipping ISBN: "+ISBN_load
-                    return
-                    continue
-                #temp_book = Book()
-                b.isbn = amazon_dict[0].get('isbn')
-                b.title = amazon_dict[0].get('title')
-                b.author = amazon_dict[0].get('author')
-                b.thumbnail_link = amazon_dict[0].get('thumbnail_link')
-                b.subtitle = ''
-                #b.append(temp_book)
+                temp_arr = get_books_for_book_title_using_google_books(
+                        'isbn:' + ISBN_load
+                        )
+                if len(temp_arr) == 0:
+                    AZ = AmazonScraper()
+                    amazon_dict = AZ.get_amazon_purchase_choices_for_keyword(ISBN_load)
+                    if len(amazon_dict) == 0:
+                        print "skipping ISBN: "+ISBN_load
+                        continue
+                    temp_book = Book()
+                    temp_book.isbn = amazon_dict[0].get('isbn')
+                    temp_book.title = amazon_dict[0].get('title')
+                    temp_book.author = amazon_dict[0].get('author')
+                    temp_book.thumbnail_link = amazon_dict[0].get('thumbnail_link')
+                    temp_book.subtitle = ''
+                    temp_arr.append(temp_book)
 
-                # temp_var = temp_arr[0]
-                # b.isbn = temp_var.isbn
-                # b.author = temp_var.author
-                # if(temp_var.subtitle is None):
-                #     b.title = temp_var.title  # check if subtitle is null
-                # else:
-                #     b.title = (
-                #             temp_var.title +
-                #             ': ' + temp_var.subtitle  # check if subtitle is null
-                #           )
-                # b.thumbnail_link = temp_var.thumbnail_link
+                temp_var = temp_arr[0]
+                b.isbn = temp_var.isbn
+                b.author = temp_var.author
+                if(temp_var.subtitle is None):
+                    b.title = temp_var.title  # check if subtitle is null
+                else:
+                    b.title = (
+                            temp_var.title +
+                            ': ' + temp_var.subtitle  # check if subtitle is null
+                          )
+                b.thumbnail_link = temp_var.thumbnail_link
 
                 # Sometimes, the isbn found by the scraper differs from the one
                 # in the file
