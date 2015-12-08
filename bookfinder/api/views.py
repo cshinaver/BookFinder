@@ -14,6 +14,7 @@ import json
 from scraper import (
     AmazonScraper,
     get_Barnes_book_prices_for_isbn,
+    get_books_for_book_title_using_google_books,
     get_google_books_for_isbn,
 )
 
@@ -99,21 +100,33 @@ def set_user_recommendation():
     book = Book.get(isbn=book_isbn)
 
     if not book:
+        book = Book()
+        # First try amazon scraper
         amazon_books = AmazonScraper().get_amazon_books_for_keyword(
             book_isbn,
         )
         if not amazon_books:
-            return 'Book could not be found', 500
-        amazon_book = amazon_books[0]
-        book = Book()
-        book.isbn = book_isbn
-        if 'title' in amazon_book:
-            book.title = amazon_book['title']
-        if 'author' in amazon_book:
-            book.author = amazon_book['author']
-        if not 'thumbnail_link':
-            return 'No thumbnail', 500
-        book.thumbnail_link = amazon_book['thumbnail_link']
+            # use google books if not amazon
+            google_books = get_books_for_book_title_using_google_books(
+                book_isbn,
+            )
+            if not google_books:
+                return 'Book could not be found', 500
+            google_book = google_books[0]
+            book.title = google_book.title
+            book.author = google_book.author
+            book.isbn = google_book.isbn
+            book.thumbnail_link = google_book.thumbnail_link
+        else:
+            amazon_book = amazon_books[0]
+            book.isbn = book_isbn
+            if 'title' in amazon_book:
+                book.title = amazon_book['title']
+            if 'author' in amazon_book:
+                book.author = amazon_book['author']
+            if not 'thumbnail_link':
+                return 'No thumbnail', 500
+            book.thumbnail_link = amazon_book['thumbnail_link']
         book.save()
 
     existing_bv = BooksViewed.get(user_id=user_id, book_id=book.id)
