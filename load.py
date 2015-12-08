@@ -26,18 +26,22 @@ def load_csv(filename):
                     'isbn:' + ISBN_load
                     )
             if len(temp_arr) == 0:
-                print "skipping ISBN: "+ISBN_load
-                continue
-                # print "try amazon"
-                # AZ = AmazonScraper()
-                # amazon_dict = AZ.get_amazon_purchase_choices_for_keyword(ISBN_load)[0]
-                # temp_book = Book()
-                # temp_book.isbn = amazon_dict.get('isbn')
-                # temp_book.title = amazon_dict.get('title')
-                # temp_book.author = amazon_dict.get('author')
-                # temp_book.thumbnail_link = amazon_dict.get('thumbnail_link')
-                # temp_arr[0] = temp_book
-                # #continue
+                #print "skipping ISBN: "+ISBN_load
+                #continue
+                #print "try amazon"
+                AZ = AmazonScraper()
+                amazon_dict = AZ.get_amazon_purchase_choices_for_keyword(ISBN_load)
+                if len(amazon_dict) == 0:
+                    print "skipping ISBN: "+ISBN_load
+                    continue
+                temp_book = Book()
+                temp_book.isbn = amazon_dict[0].get('isbn')
+                temp_book.title = amazon_dict[0].get('title')
+                temp_book.author = amazon_dict[0].get('author')
+                temp_book.thumbnail_link = amazon_dict[0].get('thumbnail_link')
+                temp_book.subtitle = ''
+                temp_arr.append(temp_book)
+                #continue
 
             temp_var = temp_arr[0]
             b.isbn = temp_var.isbn
