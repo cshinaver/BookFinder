@@ -118,15 +118,21 @@ def set_user_recommendation():
     book = Book.get(isbn=book_isbn)
 
     if not book:
-        amazon_book = AmazonScraper().get_amazon_books_for_keyword(
+        amazon_books = AmazonScraper().get_amazon_books_for_keyword(
             book_isbn,
-        )[0]
+        )
+        if not amazon_books:
+            return 'Book could not be found', 500
+        amazon_book = amazon_books[0]
         book = Book()
         book.isbn = book_isbn
         if 'title' in amazon_book:
             book.title = amazon_book['title']
         if 'author' in amazon_book:
             book.author = amazon_book['author']
+        if not 'thumbnail_link':
+            return 'No thumbnail', 500
+        book.thumbnail_link = amazon_book['thumbnail_link']
         book.save()
 
     existing_bv = BooksViewed.get(user_id=user_id, book_id=book.id)
@@ -135,8 +141,9 @@ def set_user_recommendation():
         bv.user_id = user_id
         bv.book_id = book.id
         bv.save()
+        return 'Book View added successfully', 201
 
-    return 'Book View added successfulsly'
+    return 'Book View already exists', 200
 
 
 @app.route('/api/comparison_option_list/')

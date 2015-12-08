@@ -14,5 +14,4 @@ def prices():
     resp = make_response(
         render_template('search/price-comparison.html', isbn=isbn)
     )
-    resp.set_cookie('isbn', isbn)
     return resp

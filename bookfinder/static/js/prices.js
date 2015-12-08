@@ -31,23 +31,22 @@ function getCookie(cname) {
     return "";
 }
 
-function get_comparison_option_list(query) {
-    get_file('/api/comparison_option_list/?isbn=' + query, function(text) {
-        document.getElementById("comparison-list-body").innerHTML = "";
-        document.getElementById("comparison-list-head").style.display = "";
-        option_list = JSON.parse(text);
-        var num_options = option_list.length;
-        if(num_options) {
-            for(var i = 0; i < num_options; i++) {
-                add_option_to_list(option_list[i],"comparison-list-body");
-            }
-        } else { // doesn't seem to be working
-            document.getElementById("comparison-list").innerHTML = "Sorry. There are no Book results for isbn number " + query + ".";
-        }
+function get_comparison_option_list(isbn) {
+	get_file('/api/comparison_option_list/?isbn=' + isbn, function(text) {
+		document.getElementById("comparison-list-body").innerHTML = "";
+		document.getElementById("comparison-list-head").style.display = "";
+		option_list = JSON.parse(text);
+		var num_options = option_list.length;
+		if(num_options) {
+			for(var i = 0; i < num_options; i++) {
+				add_option_to_list(option_list[i],"comparison-list-body");
+			}
+		} else { // doesn't seem to be working
+			document.getElementById("comparison-list").innerHTML = "Sorry. There are no Book results for isbn number " + isbn + ".";
+		}
 
         // Reload jquery watches
         $("a").click(function(e) {
-            var isbn = getCookie("isbn");
             $.post("/api/set_user_recommendation/",
                 {
                     book_isbn: isbn
