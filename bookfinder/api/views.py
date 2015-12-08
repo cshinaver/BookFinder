@@ -36,7 +36,14 @@ def book_query():
 def recommend_list():
     number_of_preferences = request.args.get('number_of_preferences')
     user_id = request.args.get('user_id')
-    content = requests.post("http://bookfinderrecommender.herokuapp.com/get-recommendation", data = {"user_id":user_id, "number_of_preferences":number_of_preferences}).content
+    engine_url = app.config['RECOMMENDATION_ENGINE_URL']
+    content = requests.post(
+        "{engine_url}/get-recommendation".format(engine_url=engine_url),
+        data={
+            "user_id": user_id,
+            "number_of_preferences": number_of_preferences
+        },
+    ).content
     return content
 
 
