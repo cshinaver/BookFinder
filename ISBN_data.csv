@@ -1,4 +1,109 @@
-9780321486813, Ernie Ecks, 50.00
-9780080916613, Ernie Ecks, 75.00
+1,9780538497879,calc 3
+1,9781118230640,physics 2
+1,9780133126013,intro to computing programming
+1,9780133760033,intro to EE 20224
+1,9780321982384,linear algebra
+1,9781118061145,physics 3
+1,9780195116632,electronics
+1,9780074637364,electronics
+1,9780072369779,semiconductors
+1,0201128195,electromagnetic fields
 
+2,0470458313,diff EQ
+2,0133943283,signals and systems
+2,9780072369779,semiconductors
+2,9781577667834,electromagnetic fields
+2,9780132151498,Photonics
+2,9781111425777,electric machinery
+2,9780470631553,microwave circuit design
+2,9780123850591,computer networks
+2,9780199339136,Microelectronic circuit design
+2,9780132129480,data structures
 
+3,0470458313,diff EQ
+3,0133943283,signals and systems
+3,9780072369779,semiconductors
+3,9781577667834,electromagnetic fields
+3,9781111425777,electric machinery
+3,9780132151498,Photonics
+3,9780470631553,microwave circuit design
+3,9781133187790,theory of computing
+3,9780199339136,Microelectronic circuit design
+3,9780132129480,data structures
+
+4,9780538497879,calc 3
+4,9781118230640,physics 2
+4,9780136085317,intro to computing programming
+4,9780133760033,intro to EE 20224
+4,9780321982384,linear algebra
+4,9781118061145,physics 3
+4,9780199931507,electronics
+4,9780199339136,electronics
+4,9781577667834,electromagnetic fields
+4,9781111425777,electric machinery
+
+5,9780470458310,diff EQ
+5,0470458313,signals and systems
+5,9780072369779,semiconductors
+5,9781577667834,electromagnetic fields
+5,9780815341055,introduction to systems biology
+5,9780961672188,IC Fab
+5,9781305076556,microcontrollers
+5,9780132151498,Photonics
+5,9780470631553,microwave circuit design
+5,9780199339136,Microelectronic circuit design
+
+6,9780538497879,calc 3
+6,9781118230640,physics 2
+6,9780133976892,Fund comp 1
+6,9780073383095,discrete math
+6,9780321982384,linear algebra
+6,9780132129480,data structures
+6,9781133187790,theory of computing
+6,9780133760033,intro to EE 20224
+6,9781111425777,electric machinery
+6,9780124078864,comp arch
+
+7,9780132129480,data structures
+7,9780124078864,comp arch
+7,9780133760033,intro to EE 20224
+7,9780199931507,electronics
+7,9780199339136,electronics
+7,9780199339136,Microelectronic circuit design
+7,9781133111368,prob and stats
+7,9780133574845,computer Graphics
+7,9780321486813,compilers
+7,9780136042594,artificial intelligence
+
+8,9780132129480,data structures
+8,9780124078864,comp arch
+8,9780133760033,intro to EE 20224
+8,9780262033848,algorithms
+8,9780321547743,circuit design
+8,9780199339136,Microelectronic circuit design
+8,9781133111368,prob and stats
+8,9780133574845,computer Graphics
+8,9780321486813,compilers
+8,9780136042594,artificial intelligence
+
+9,9780538497879,calc 3
+9,9781118230640,physics 2
+9,9780133976892,Fund comp 1
+9,9780073383095,discrete math
+9,9780321982384,linear algebra
+9,9780132129480,data structures
+9,9781133187790,theory of computing
+9,9780133760033,intro to EE 20224
+9,9781133111368,prob and stats
+9,9780124078864,comp arch
+
+10,9780132129480,data structures
+10,9780124078864,comp arch
+10,9780133760033,intro to EE 20224
+10,9780262033848,algorithms
+10,9780716710455,alogrithms
+10,9781133111368,prob and stats
+10,9781133187790,theory of computing
+10,9780321486813,compilers
+10,9780136042594,artificial intelligence
+10,9780128008676,social sensing
