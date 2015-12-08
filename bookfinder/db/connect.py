@@ -23,7 +23,8 @@ def init_db():
                 id serial primary key,
                 title varchar(200),
                 ISBN varchar(13) unique,
-                author varchar(100)
+                author varchar(100),
+                thumbnail_link varchar(200)
             );
             create table BookfinderUser(
                 id serial primary key,

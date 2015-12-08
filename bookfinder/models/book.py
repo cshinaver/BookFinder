@@ -6,3 +6,4 @@ class Book(BaseModel):
     title = None
     isbn = None
     author = None
+    thumbnail_link = None
