@@ -1,14 +1,18 @@
-from flask import render_template, request
+from flask import request
+from flask.ext.login import (
+    current_user,
+)
+from flask.views import View
 
 from bookfinder import app
-from bookfinder.db.connect import execute_sql_query
 from bookfinder.models.book import Book
+from bookfinder.models.booksviewed import BooksViewed
 from bookfinder.models.purchasechoice import PurchaseChoice
+from bookfinder.models.bookfinderuser import BookfinderUser as User
 
 import json
 from scraper import (
-    get_book_object_list_for_book_title,
-    get_amazon_books_for_keyword,
+    AmazonScraper,
     get_Barnes_book_prices_for_isbn,
     get_google_books_for_isbn,
 )
@@ -17,71 +21,111 @@ from scraper import (
 @app.route('/api/books_list/')
 def book_query():
     title = request.args.get('title')
-    book_list = []
-    for book in get_book_object_list_for_book_title(title):
-        book_list.append(book.to_dict())
+    amazon_books = AmazonScraper().get_amazon_books_for_keyword(title)
+    # Convert all values to strings
+    book_list = [
+        {key: str(value) for (key, value) in d.iteritems()}
+        for d in amazon_books
+    ]
     json_output = json.dumps(book_list, sort_keys=True, indent=4)
     return json_output
 
 
-@app.route('/api/used_option_list/')
-def used_option_query():
-    def get_list_by_isbn(isbn):
-        def fill_list_by_bookid(option_list,book_id):
-            def add_to_list(old_list,option):
-                if option.isLocalSeller:
-                    old_list.append({
-                        'seller': option.local_seller_id,
-                        'price': option.price,
-                        'rental': option.isRental,
-                        'book_type': option.type,
-                        'link': option.link,
-                        'purchaseID': option.id
-                    })
-                else:
-                    old_list.append({
-                        'seller': option.remoteSellerName,
-                        'price': option.price,
-                        'rental': option.isRental,
-                        'book_type': option.type,
-                        'link': option.link,
-                        'purchaseID': option.id
-                    })
-                return old_list
-            
-            query_return = PurchaseChoice.get(book_id=book_id)
-            if isinstance(query_return,list):
-                for option in query_return:
-                    option_list = add_to_list(option_list,option)
-            else:
-                option_list = add_to_list(option_list,query_return)
-            return option_list
-        
+class UsedOptionList(View):
+    def dispatch_request(self):
+        option_list = self.get_list_by_isbn(request.args.get('isbn'))
+        json_output = json.dumps(option_list, sort_keys=True, indent=4)
+        return json_output
+
+    def get_list_by_isbn(self, isbn):
         book_query = Book.get(isbn=isbn)
-        if book_query is None:#return blank list if this book is not yet in the database
+        # return blank list if this book is not yet in the database
+        if book_query is None:
             option_list = []
-        elif isinstance(book_query,list):
-            # This indicates there are multiple books with the same ISBN number, which shouldn't happen
+        elif isinstance(book_query, list):
+            # This indicates there are multiple books
+            # with the same ISBN number, which shouldn't happen
             option_list = []
             for book in book_query:
-                option_list = fill_list_by_bookid(option_list,book.id)
+                option_list = self.fill_list_by_bookid(option_list, book.id)
         else:
-            option_list = fill_list_by_bookid([],book_query.id)
+            option_list = self.fill_list_by_bookid([], book_query.id)
         return option_list
-    
-    option_list = get_list_by_isbn(request.args.get('isbn'))
-    json_output = json.dumps(option_list, sort_keys=True, indent=4)
-    return json_output
+
+    def fill_list_by_bookid(self, option_list, book_id):
+        def add_to_list(old_list, option):
+            if not option:
+                return old_list
+            elif not option.price:
+                return old_list
+            option.price = "{:.2f}".format(float(option.price))
+            if option.isLocalSeller:
+                local_seller = User.get(id=option.local_seller_id)
+                old_list.append({
+                    'seller': local_seller.username,
+                    'price': option.price,
+                    'rental': option.isRental,
+                    'book_type': option.type,
+                    'link': option.link,
+                    'purchaseID': option.id
+                })
+            else:
+                old_list.append({
+                    'seller': option.remoteSellerName,
+                    'price': option.price,
+                    'rental': option.isRental,
+                    'book_type': option.type,
+                    'link': option.link,
+                    'purchaseID': option.id
+                })
+            return old_list
+
+        query_return = PurchaseChoice.get(book_id=book_id)
+        if isinstance(query_return, list):
+            for option in query_return:
+                option_list = add_to_list(option_list, option)
+        else:
+            option_list = add_to_list(option_list, query_return)
+        return option_list
+
+
+@app.route('/api/set_user_recommendation/', methods=['POST'])
+def set_user_recommendation():
+    """
+    params: book_isbn
+    """
+    user_id = current_user.id
+    book_isbn = request.form.get('book_isbn')
+    book = Book.get(isbn=book_isbn)
+
+    if not book:
+        amazon_book = AmazonScraper().get_amazon_books_for_keyword(
+            book_isbn,
+        )[0]
+        book = Book()
+        book.isbn = book_isbn
+        if 'title' in amazon_book:
+            book.title = amazon_book['title']
+        if 'author' in amazon_book:
+            book.author = amazon_book['author']
+        book.save()
+
+    existing_bv = BooksViewed.get(user_id=user_id, book_id=book.id)
+    if not existing_bv:
+        bv = BooksViewed()
+        bv.user_id = user_id
+        bv.book_id = book.id
+        bv.save()
+
+    return 'Book View added successfulsly'
 
 
 @app.route('/api/comparison_option_list/')
 def comparison_option_query():
     isbn = request.args.get('isbn')
     option_list = []
-    amazon_list = get_amazon_books_for_keyword(isbn)
-    if amazon_list is not None:
-        for option in amazon_list:
-            option_list.append(option.to_dict())
+    amazon_list = AmazonScraper().get_amazon_purchase_choices_for_keyword(isbn)
+    option_list.extend(amazon_list)
     barnes_list = get_Barnes_book_prices_for_isbn(isbn)
     if barnes_list is not None:
         for option in barnes_list:
@@ -92,3 +136,8 @@ def comparison_option_query():
             option_list.append(option.to_dict())
     json_output = json.dumps(option_list, sort_keys=True, indent=4)
     return json_output
+
+app.add_url_rule(
+    '/api/used_option_list/',
+    view_func=UsedOptionList.as_view('used_option_list'),
+)

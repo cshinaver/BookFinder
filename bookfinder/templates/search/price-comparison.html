@@ -2,7 +2,7 @@
 {% block title %}Prices{% endblock %}
 {% block content %}
 	<div id="page-body" class="container">
-		<h4><b>Used Book Prices</b></h4>
+		<h4><b>Bookfinder Sellers</b></h4>
 		<table id="used-list" class="table table-striped table-hover">
 			<thead id="used-list-head" style="display:none">
 				<tr>
@@ -21,7 +21,7 @@
 				</tr>
 			</tbody>
 		</table>
-		<h4><b>Other Seller's Comparison Prices</b></h4>
+		<h4><b>Outside Sellers</b></h4>
 		<table id="comparison-list" class="table table-striped table-hover">
 			<thead id="comparison-list-head" style="display:none">
 				<tr>
@@ -47,6 +47,6 @@
 	<script src="/static/js/get-file.js"></script>
 	<script src="/static/js/prices.js"></script>
 	<script>
-		get_option_list('{{ args.isbn }}');
+		get_option_list('{{ isbn }}');
 	</script>
 {% endblock %}
