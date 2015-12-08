@@ -83,7 +83,7 @@ function add_option_to_list(option, list_id) {
     new_type_div.setAttribute("align","center");
     new_type_div.appendChild(new_type_text);
 	new_type_link.setAttribute("style","display:block;width:100%;height:100%;padding:10px;text-decoration:none;color:black;");
-	new_type_link.appendChild(new_type_div);
+    new_type_link.appendChild(new_type_div);
 	new_type.appendChild(new_type_link);
 	new_type.setAttribute("style","padding:0px;");
 	new_row.appendChild(new_type);
@@ -102,7 +102,7 @@ function add_option_to_list(option, list_id) {
     new_rental_div.appendChild(new_rental_text);
 	new_rental_link.setAttribute("href",option.link);
 	new_rental_link.setAttribute("style","display:block;width:100%;height:100%;padding:10px;text-decoration:none;color:black;");
-	new_rental_link.appendChild(new_rental_div);
+    new_rental_link.appendChild(new_rental_div);
 	new_rental.appendChild(new_rental_link);
 	new_rental.setAttribute("style","padding:0px;");
 	new_row.appendChild(new_rental);
