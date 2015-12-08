@@ -11,7 +11,7 @@ from bookfinder.models.booksviewed import BooksViewed
 from bookfinder.login.views import User
 
 
-def store_book_info_for_user_and_isbn(user_id, isbn):
+def store_book_info_for_user_and_isbn(user_id, isbn, isbns_to_retry):
     # add book object
     b = Book()  # create temp book object
     query_book = Book.get(
@@ -25,8 +25,12 @@ def store_book_info_for_user_and_isbn(user_id, isbn):
             AZ = AmazonScraper()
             amazon_dict = AZ.get_amazon_purchase_choices_for_keyword(isbn)
             if len(amazon_dict) == 0:
-                print "skipping ISBN: "+isbn
-                return
+                isbn_info = {}
+                isbn_info['isbn'] = isbn
+                isbn_info['user_id'] = user_id
+                isbn_info['retries'] = 0
+                isbns_to_retry.append(isbn_info)
+                return False
             temp_book = Book()
             temp_book.isbn = amazon_dict[0].get('isbn')
             temp_book.title = amazon_dict[0].get('title')
@@ -75,6 +79,7 @@ def store_book_info_for_user_and_isbn(user_id, isbn):
     booksV.user_id = user_id
     booksV.book_id = b.id
     booksV.save()
+    return True
 
 
 def load_csv(filename):
@@ -82,6 +87,8 @@ def load_csv(filename):
     csv_f = csv.reader(f)
     newUser = "dummy"
     current_user_id = None
+    # keep track of isbns to retry
+    isbns_to_retry = []
     for row in csv_f:
         print row
 
@@ -95,8 +102,33 @@ def load_csv(filename):
             newUser.save()
             current_user_id = newUser.id
 
-        store_book_info_for_user_and_isbn(current_user_id, isbn)
+        store_book_info_for_user_and_isbn(
+            current_user_id,
+            isbn,
+            isbns_to_retry,
+        )
 
+    # retry failed isbns
+    failed_isbns = []
+    while isbns_to_retry:
+        max_retries = 5
+
+        success = False
+        isbn_info = isbns_to_retry[0]
+        for i in xrange(0, max_retries):
+            success = store_book_info_for_user_and_isbn(
+                isbn_info['user_id'],
+                isbn_info['isbn'],
+                []
+            )
+            if success:
+                break
+        if not success:
+            failed_isbns.append(isbn_info['isbn'])
+
+        isbns_to_retry = isbns_to_retry[1:]
+    for isbn in failed_isbns:
+        print isbn + " failed"
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
