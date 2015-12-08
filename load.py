@@ -60,7 +60,16 @@ def load_csv(filename):
                           )
                 b.thumbnail_link = temp_var.thumbnail_link
 
-                b.save()    #save book
+                # Sometimes, the isbn found by the scraper differs from the one
+                # in the file
+                # In this case, a duplicate book would be created (same isbn)
+                # Check for found isbn first before saving book
+                possible_duplicate_book = Book.get(isbn=b.isbn)
+                if possible_duplicate_book:
+                    b = possible_duplicate_book
+                else:
+                    b.save()    #save book
+
             else:   #if book in DB, set b.id to id of DB book
                 b.id = query_book.id
 
