@@ -4,6 +4,7 @@ from bookfinder.models.book import Book
 from bookfinder.models.purchasechoice import PurchaseChoice
 from bookfinder.api.scraper import get_book_object_list_for_book_title
 from bookfinder import app
+from random import randint
 
 def load_csv():
     f = open('ISBN_data.csv')
@@ -12,9 +13,9 @@ def load_csv():
         print row
 
         if len(row) != 0:
-        	ISBN_load = row[0]
-        	Seller_load = row[1]
-        	Price_load = row[2]
+        	userID = row[0]
+        	ISBN_load = row[1]
+        	class_name = row[2]
 
         	#add book object
 	        b = Book()  #create temp book object
@@ -38,10 +39,10 @@ def load_csv():
 	        #Make purchase choice
 	     	p = PurchaseChoice()
 	        p.id = b.id
-	        p.price = Price_load #default to 10
+	        p.price = randint(55,250) #default to 10
 	        p.type = 'Hardcover'
 	        p.isRental = False
 	        p.link = '' # change to valid link
-	        p.local_seller_id = Seller_load # change to user once login is created
+	        p.local_seller_id = userID # change to user once login is created
 	        p.isLocalSeller = True
 
