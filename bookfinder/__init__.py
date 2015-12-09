@@ -1,11 +1,13 @@
 import os
 
 from flask import Flask
+from flask.ext.cache import Cache
 from flask.ext.login import LoginManager
 
 app = Flask(__name__)
 
 app.secret_key = 'super secret key'
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 # Config
 # BOOKFINDER_SETTINGS must be set to development or production
 settings_type = os.environ.get('BOOKFINDER_SETTINGS', None)

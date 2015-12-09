@@ -4,7 +4,7 @@ from flask.ext.login import (
 )
 from flask.views import View
 
-from bookfinder import app
+from bookfinder import app, cache
 from bookfinder.models.book import Book
 from bookfinder.models.booksviewed import BooksViewed
 from bookfinder.models.purchasechoice import PurchaseChoice
