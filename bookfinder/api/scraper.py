@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 from decimal import Decimal
+from isbntools.app import to_isbn13
 
 GOOGLE_BOOKS_API_KEY = "AIzaSyCnH1epJJUGVYe3yc1qdxFsTt8nplat83c"
 
@@ -183,6 +184,7 @@ class AmazonScraper:
         # If B in isbn, some kind of amazon special book
         if 'B' in isbn:
             return []
+        isbn = to_isbn13(isbn)
         link_item = item.find(
             'a',
             class_="a-link-normal s-access-detail-page a-text-normal",
@@ -516,11 +518,12 @@ def get_books_for_book_title_using_google_books(title):
         book.title = volume_info['title']
         book.subtitle = volume_info.get('subtitle')
         authors = volume_info.get('authors')
-        book.author = authors[0]
+        if authors:
+            book.author = authors[0]
         # handle multiple authors by comma-delimiting them
-        for author in authors:
-            if book.author != author:
-                book.author += (', '+author)
+            for author in authors:
+                if book.author != author:
+                    book.author += (', '+author)
         image_links = volume_info.get(
             'imageLinks'
         )
