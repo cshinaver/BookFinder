@@ -120,6 +120,7 @@ def load_csv(filename):
         success = False
         isbn_info = isbns_to_retry[0]
         for i in xrange(0, max_retries):
+            print "Trying " + isbn_info['isbn'] + " time " + str(i + 1)
             success = store_book_info_for_user_and_isbn(
                 isbn_info['user_id'],
                 isbn_info['isbn'],
