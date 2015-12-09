@@ -18,9 +18,10 @@ def store_book_info_for_user_and_isbn(user_id, isbn, isbns_to_retry):
         isbn=isbn
     )  # check if Book object is already in DB
     if not query_book:
-        temp_arr = get_books_for_book_title_using_google_books(
-            'isbn:' + isbn
-        )
+        #temp_arr = get_books_for_book_title_using_google_books(
+        #    'isbn:' + isbn
+        #)
+        temp_arr = []
         if len(temp_arr) == 0:
             AZ = AmazonScraper()
             amazon_dict = AZ.get_amazon_purchase_choices_for_keyword(isbn)
