@@ -18,9 +18,10 @@ def store_book_info_for_user_and_isbn(user_id, isbn, isbns_to_retry):
         isbn=isbn
     )  # check if Book object is already in DB
     if not query_book:
-        temp_arr = get_books_for_book_title_using_google_books(
-            'isbn:' + isbn
-        )
+        #temp_arr = get_books_for_book_title_using_google_books(
+        #    'isbn:' + isbn
+        #)
+        temp_arr = []
         if len(temp_arr) == 0:
             AZ = AmazonScraper()
             amazon_dict = AZ.get_amazon_purchase_choices_for_keyword(isbn)
@@ -119,6 +120,7 @@ def load_csv(filename):
         success = False
         isbn_info = isbns_to_retry[0]
         for i in xrange(0, max_retries):
+            print "Trying " + isbn_info['isbn'] + " time " + str(i + 1)
             success = store_book_info_for_user_and_isbn(
                 isbn_info['user_id'],
                 isbn_info['isbn'],

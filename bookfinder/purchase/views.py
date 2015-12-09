@@ -47,6 +47,7 @@ class SellBook(View):
     def format_input_data(self, isbn, price):
         errors = []
 
+        isbn = isbn.encode('utf8')
         # Strip '-'
         isbn = isbn.replace('-', '')
 
