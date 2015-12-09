@@ -3,6 +3,7 @@ from flask.ext.login import (
     current_user,
 )
 from flask.views import View
+from isbnlib import to_isbn13
 
 from bookfinder import app
 from bookfinder.models.book import Book
@@ -141,11 +142,11 @@ def set_user_recommendation():
             google_book = google_books[0]
             book.title = google_book.title
             book.author = google_book.author
-            book.isbn = google_book.isbn
+            book.isbn = to_isbn13(google_book.isbn)
             book.thumbnail_link = google_book.thumbnail_link
         else:
             amazon_book = amazon_books[0]
-            book.isbn = book_isbn
+            book.isbn = to_isbn13(book_isbn)
             if 'title' in amazon_book:
                 book.title = amazon_book['title']
             if 'author' in amazon_book:

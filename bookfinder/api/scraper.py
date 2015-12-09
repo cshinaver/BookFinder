@@ -1,4 +1,5 @@
 import requests
+from isbnlib import to_isbn13
 from bs4 import BeautifulSoup
 import re
 from decimal import Decimal
@@ -183,6 +184,7 @@ class AmazonScraper:
         # If B in isbn, some kind of amazon special book
         if 'B' in isbn:
             return []
+        isbn = to_isbn13(isbn)
         link_item = item.find(
             'a',
             class_="a-link-normal s-access-detail-page a-text-normal",
