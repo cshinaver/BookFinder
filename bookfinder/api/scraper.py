@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import re
 from decimal import Decimal
 
-GOOGLE_BOOKS_API_KEY = "AIzaSyAMbrk_RWZtJHNtew37Tg5kG_MT5JBUiLE"
+GOOGLE_BOOKS_API_KEY = "AIzaSyCnH1epJJUGVYe3yc1qdxFsTt8nplat83c"
 
 
 class PurchaseOption:
