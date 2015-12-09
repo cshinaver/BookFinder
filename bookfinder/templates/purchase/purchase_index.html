@@ -3,19 +3,17 @@
 
 {% block content %}
 <div class="container">
-  <h1>Hello {{ current_user.username }}!</h1>
-  <h3>Book Information</h3>
-  <form action="" method="post" name="login">
-      {{ form.hidden_tag() }} <!--necessary for CSRF prevention-->
-      <p>
-          Enter ISBN (ISBN-10 or ISBN-13):<br>
-          {{ form.ISBN(size=80) }}<br>
-      </p>
-      <p>
-          Enter your asking price:<br>
-          {{ form.Price(size=80) }}<br>
-      </p>
-      <p><input type="submit" value="Submit"></p>
-  </form>
+    <h1>Hello {{ current_user.username }}!</h1>
+    <h3>Book Information</h3>
+    <form method="post" name="login" action="">
+        {{ form.hidden_tag() }} <!--necessary for CSRF prevention-->
+        <fieldset class="form-group">
+            <label >Enter ISBN (ISBN-10 or ISBN-13)</label>
+            <input type="text" class="form-control" name="ISBN" id="ISBN" placeholder="Insert here">
+            <label for="formGroupExampleInput2">Enter your asking price (50.00):</label>
+            <input type="text" class="form-control" name="Price" id="Price" placeholder="Insert here">
+        </fieldset>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
 </div>
 {% endblock %}
