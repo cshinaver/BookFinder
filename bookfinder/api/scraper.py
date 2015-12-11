@@ -1,9 +1,10 @@
 import requests
+from isbnlib import to_isbn13
 from bs4 import BeautifulSoup
 import re
 from decimal import Decimal
 
-GOOGLE_BOOKS_API_KEY = "AIzaSyAMbrk_RWZtJHNtew37Tg5kG_MT5JBUiLE"
+GOOGLE_BOOKS_API_KEY = "AIzaSyCnH1epJJUGVYe3yc1qdxFsTt8nplat83c"
 
 
 class PurchaseOption:
@@ -183,6 +184,7 @@ class AmazonScraper:
         # If B in isbn, some kind of amazon special book
         if 'B' in isbn:
             return []
+        isbn = to_isbn13(isbn)
         link_item = item.find(
             'a',
             class_="a-link-normal s-access-detail-page a-text-normal",
