@@ -7,7 +7,7 @@ class ApiScraperTestCase(unittest.TestCase):
     def test_amazon_scraper_gets_purchase_choices(self):
         """
         PurchaseChoice should have isbn, title, price, seller, thumbnail_link,
-        book_type, regular_link, and rental
+        book_type, regular_link, rental and author
         """
         book_title = "Compilers"
         scraper = AmazonScraper()
@@ -21,3 +21,5 @@ class ApiScraperTestCase(unittest.TestCase):
         self.assertNotEqual(b['book_type'], '')
         self.assertNotEqual(b['link'], '')
         self.assertNotEqual(b['rental'], '')
+        self.assertNotEqual(b['authors'], None)
+        self.assertNotEqual(len(b['authors']), 0)
