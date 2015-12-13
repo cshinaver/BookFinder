@@ -102,10 +102,7 @@ class AmazonScraper:
         return [item for sublist in book_lists for item in sublist]
 
     def get_amazon_books_for_keyword(self, keyword):
-        content = self._get_page_for_amazon_book_search(keyword)
-        items = self._get_book_list_items_from_content(content)
-        book_lists = map(self._parse_book_list_item_into_books, items)
-        books = [item for sublist in book_lists for item in sublist]
+        books = self.get_amazon_purchase_choices_for_keyword(keyword)
         unique_books = []
         isbns = set([])
         for book in books:
