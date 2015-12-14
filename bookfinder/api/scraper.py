@@ -102,10 +102,7 @@ class AmazonScraper:
         return [item for sublist in book_lists for item in sublist]
 
     def get_amazon_books_for_keyword(self, keyword):
-        content = self._get_page_for_amazon_book_search(keyword)
-        items = self._get_book_list_items_from_content(content)
-        book_lists = map(self._parse_book_list_item_into_books, items)
-        books = [item for sublist in book_lists for item in sublist]
+        books = self.get_amazon_purchase_choices_for_keyword(keyword)
         unique_books = []
         isbns = set([])
         for book in books:
@@ -170,6 +167,25 @@ class AmazonScraper:
 
         return new_book
 
+    def _get_author_from_author_combined_item(self, item):
+        def get_authors_from_soup_item(soup):
+            text = soup.get_text()
+            if 'by' in text:
+                return ''
+            else:
+                author_name = re.sub(r'and', '', text)
+                return author_name.strip()
+
+        authors = []
+        uncleaned_authors = item.find_all(
+            'span',
+            class_='a-size-small a-color-secondary',
+        )
+        authors.extend(
+            map(get_authors_from_soup_item, uncleaned_authors),
+        )
+        return filter(lambda x: x != '', authors)
+
     def _parse_book_list_item_into_books(self, item):
         def get_book_type(item):
             text = item.get_text()
@@ -191,6 +207,13 @@ class AmazonScraper:
         )
         if not link_item:
             return []
+        author_combined_item = item.find(
+            'div',
+            class_="a-row a-spacing-none",
+        )
+        authors = self._get_author_from_author_combined_item(
+            author_combined_item,
+        )
         new_book_title = link_item.attrs['title'].encode('utf8')
 
         # Handle pricing for hardcover, Paperback, Kindle Edition, rent
@@ -216,6 +239,7 @@ class AmazonScraper:
         for book in new_books:
             book['isbn'] = isbn
             book['thumbnail_link'] = thumbnail_link
+            book['authors'] = authors
         return new_books
 
 
