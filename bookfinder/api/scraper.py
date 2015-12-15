@@ -240,6 +240,7 @@ class AmazonScraper:
             book['isbn'] = isbn
             book['thumbnail_link'] = thumbnail_link
             book['authors'] = authors
+            print "authors: "+book['authors'][0]
         return new_books
 
 

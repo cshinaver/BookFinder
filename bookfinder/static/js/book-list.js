@@ -23,7 +23,7 @@ function add_item_to_list(book, list_id) {
     new_info_frame.appendChild(new_isbn);
     //Author:
     var new_author = document.createElement("p");
-    var new_author_text = document.createTextNode("Author: "+book.author);
+    var new_author_text = document.createTextNode("Author: "+book.authors.toString());
     new_author.appendChild(new_author_text);
     new_author.setAttribute("class","list-group-item-text");
     new_info_frame.appendChild(new_author);
