@@ -13,7 +13,7 @@ function get_book_list(query) {
             else if (retries < max_retries) {
                 retries += 1;
                 get_book_list_helper(retries);
-            } else { // doesn't seem to be working
+            } else {
                 document.getElementById("result-list").innerHTML = "Sorry. There are no Book results for the search query \"" + query + "\".";
             }
         });
