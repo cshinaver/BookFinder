@@ -10,7 +10,7 @@ from flask.ext.login import (
 )
 from psycopg2 import IntegrityError
 
-from bookfinder import app
+from bookfinder import app, login_manager
 from bookfinder.models.bookfinderuser import BookfinderUser as User
 from bookfinder.login.forms import LoginForm, CreateUserForm
 
@@ -39,6 +39,12 @@ def create_user():
                 return render_template('login/create_user.html', form=form)
     form = CreateUserForm()
     return render_template('login/create_user.html', form=form)
+
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    flash('Please login before accessing this page', 'error')
+    return login()
 
 
 @app.route('/login', methods=['GET', 'POST'])

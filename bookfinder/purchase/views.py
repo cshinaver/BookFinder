@@ -5,12 +5,13 @@ from bookfinder.api.scraper import get_books_for_book_title_using_google_books
 from bookfinder.purchase.form import SellBookForm
 from bookfinder.models.book import Book
 from bookfinder.models.purchasechoice import PurchaseChoice
-from flask.ext.login import current_user
+from flask.ext.login import current_user, login_required
 
 
 class SellBook(View):
     methods = ['GET', 'POST']
 
+    @login_required
     def dispatch_request(self):
         form = SellBookForm()
         if request.method == 'POST':
