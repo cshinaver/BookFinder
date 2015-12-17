@@ -15,5 +15,73 @@
         </fieldset>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+    <div id="book-information" style="display:none">
+        <h3 id="book-title">Book Title: </h3>
+        <h3 id="book-author">Book Authors</h3>
+        <h3 id="book-isbn">Book ISBN</h3>
+    </div>
+    <div id="book-comparison-listing" style="display:none">
+        <h4><b>Bookfinder Sellers</b></h4>
+        <table id="used-list" class="table table-striped table-hover">
+            <thead id="used-list-head" style="display:none">
+                <tr>
+                    <th>Seller</th>
+                    <th><div align="center">Type</div></th>
+                    <th><div align="center">Rental</div></th>
+                    <th><div align="right">Price</div></th>
+                </tr>
+            </thead>
+            <tbody id="used-list-body">
+                <tr>
+                    <td>
+                        <h4>Please Wait...</h4>
+                        <p>Downloading search results.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <h4><b>Outside Sellers</b></h4>
+        <table id="comparison-list" class="table table-striped table-hover">
+            <thead id="comparison-list-head" style="display:none">
+                <tr>
+                    <th>Seller</th>
+                    <th><div align="center">Type</div></th>
+                    <th><div align="center">Rental</div></th>
+                    <th><div align="right">Price</div></th>
+                </tr>
+            </thead>
+            <tbody id="comparison-list-body">
+                <tr>
+                    <td>
+                        <h4>Please Wait...</h4>
+                        <p>Downloading search results.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
+{% endblock %}
+{% block footer %}
+    {{ super() }}
+    <script src="/static/js/get-file.js"></script>
+    <script src="/static/js/prices.js"></script>
+    <script>
+        $(function() {
+            $("#ISBN").on('input', function(e) {
+                if (e.target.value.length >= 10) {
+                    $.get("/api/book_for_isbn", { isbn: e.target.value}, function(data) {
+                        book = JSON.parse(data);
+                        authors = book.author;
+                        $("#book-title").text("Book title: " + book.title);
+                        $("#book-isbn").text("Book ISBN-13: " + book.isbn);
+                        $("#book-author").text("Book authors: " + authors.join(", "));
+                        $("#book-information").show();
+                        get_option_list(e.target.value);
+                        $("#book-comparison-listing").show();
+                    });
+                }
+            });
+        });
+    </script>
 {% endblock %}

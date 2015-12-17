@@ -174,7 +174,9 @@ class AmazonScraper:
                 return ''
             else:
                 author_name = re.sub(r'and', '', text)
-                return author_name.strip()
+                author_name = author_name.strip()
+                author_name = author_name.encode('utf8')
+                return author_name
 
         authors = []
         uncleaned_authors = item.find_all(
