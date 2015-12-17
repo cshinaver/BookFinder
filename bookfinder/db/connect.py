@@ -52,7 +52,8 @@ def init_db():
                 book_id int,
                 foreign key (book_id) references Book(id),
                 user_id int,
-                foreign key (user_id) references BookfinderUser(id)
+                foreign key (user_id) references BookfinderUser(id),
+                time_added timestamp
             );
         '''
     )
