@@ -28,13 +28,8 @@ function add_item_to_list(book, list_id) {
     new_author.appendChild(new_author_text);
     new_author.setAttribute("class","list-group-item-text");
     new_info_frame.appendChild(new_author);
-    //Book_type:
-    var new_book_type = document.createElement("p");
-    var new_book_type_text = document.createTextNode("Book Type: "+book.book_type);
-    new_book_type.appendChild(new_book_type_text);
-    new_book_type.setAttribute("class","list-group-item-text");
-    new_info_frame.appendChild(new_book_type);
     new_entry.appendChild(new_info_frame);
+
     new_entry.setAttribute("style","overflow:auto;");
     new_entry.setAttribute("class","list-group-item");
     new_entry.setAttribute("href",'/search/prices?isbn=' + book.isbn);
