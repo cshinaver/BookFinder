@@ -239,7 +239,7 @@ class AmazonScraper:
         for book in new_books:
             book['isbn'] = isbn
             book['thumbnail_link'] = thumbnail_link
-            book['authors'] = authors
+            book['author'] = authors
         return new_books
 
 
