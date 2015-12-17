@@ -68,7 +68,7 @@ def book_info():
     book_data = Book.get(id=id)
     if book_data is None:
         return ""
-    json_output = json.dumps(book_data.__dict__, sort_keys=True, indent=4);
+    json_output = json.dumps(book_data.__dict__, sort_keys=True, indent=4)
     return json_output
 
 
