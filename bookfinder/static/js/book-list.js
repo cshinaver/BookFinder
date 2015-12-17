@@ -22,9 +22,9 @@ function add_item_to_list(book, list_id) {
     new_isbn.setAttribute("class","list-group-item-text");
     new_info_frame.appendChild(new_isbn);
     //Author:
-    var authors=book.author.replace("\', u\'", ", ");  //format string if multiple authors
+    var authors=book.author.replace("\', \'", ", ");  //format string if multiple authors
     var new_author = document.createElement("p");
-    var new_author_text = document.createTextNode("Author: "+authors.slice(3,authors.length-2));//cut off ugly format of author string
+    var new_author_text = document.createTextNode("Author: "+authors.slice(2,authors.length-2));//cut off ugly format of author string
     new_author.appendChild(new_author_text);
     new_author.setAttribute("class","list-group-item-text");
     new_info_frame.appendChild(new_author);
