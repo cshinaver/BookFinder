@@ -2,11 +2,21 @@
 {% block title %}All Books{% endblock %}
 {% block content %}
     <div id="page-body" class="container">
-        <h1>Enjoy our large selection of books!</h1>
-        <ul>
-            {% for book in books %}
-                <li>{{ book.title }} by {{ book.author }}</li>
-            {% endfor %}
-        </ul>
+        <h1>Most Recently Viewed Books</h1>
+        <div id="result-list" class="list-group">
+            <a class="list-group-item">
+                <h4 class="list-group-item-heading">Please Wait...</h4>
+                <p class="list-group-item-text">Downloading search results.</p>
+            </a>
+        </div>
     </div>
+{% endblock %}
+{% block footer %}
+    {{ super() }}
+    <script src="/static/js/get-file.js"></script>
+    <script src="/static/js/book-list.js"></script>
+    <script src="/static/js/search.js"></script>
+    <script>
+        get_book_list_for_isbn('{{ isbns | safe }}');
+    </script>
 {% endblock %}

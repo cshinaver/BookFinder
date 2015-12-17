@@ -1,3 +1,14 @@
+function get_book_list_for_isbn(json_isbns) {
+    isbn_list = JSON.parse(json_isbns);
+    document.getElementById("result-list").innerHTML = "";
+    isbn_list.forEach(function(isbn) {
+        get_file('/api/books_list/?title=' + isbn, function(text) {
+            book_list = JSON.parse(text);
+                add_book_to_list(book_list[0]);
+        });
+    });
+}
+
 function get_book_list(query) {
     get_file('/api/books_list/?title=' + query, function(text) {
         document.getElementById("result-list").innerHTML = "";
