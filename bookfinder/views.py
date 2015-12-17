@@ -10,8 +10,8 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/all_books')
-def all_books():
+@app.route('/recently_viewed_books')
+def recently_viewed_books():
     # Get books only
     ls = execute_sql_query(
         """
@@ -25,7 +25,7 @@ def all_books():
         book.title = b[-3]
         book.author = b[-1]
         books.append(book)
-    return render_template('all_books.html', books=books)
+    return render_template('recently_viewed_books.html', books=books)
 
 
 @app.route('/static/<path:path>')
