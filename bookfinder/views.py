@@ -1,7 +1,7 @@
 from flask import render_template, send_from_directory
+import json
 
 from bookfinder import app
-from bookfinder.models.book import Book
 from bookfinder.db.connect import execute_sql_query
 
 
@@ -10,22 +10,20 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/all_books')
-def all_books():
+@app.route('/recently_viewed_books')
+def recently_viewed_books():
     # Get books only
-    ls = execute_sql_query(
+    isbns = execute_sql_query(
         """
-            select distinct on (book_id) * from purchasechoice
-            inner join book on (book.id = purchasechoice.book_id);
+            select (isbn) from booksviewed
+            inner join book on (book.id = booksviewed.book_id)
+            order by time_added desc
+            limit 10;
         """
     )
-    books = []
-    for b in ls:
-        book = Book()
-        book.title = b[-3]
-        book.author = b[-1]
-        books.append(book)
-    return render_template('all_books.html', books=books)
+    isbns = [ls[0] for ls in isbns]
+    json_isbns = json.dumps(isbns)
+    return render_template('recently_viewed_books.html', isbns=json_isbns)
 
 
 @app.route('/static/<path:path>')

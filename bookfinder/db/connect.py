@@ -52,7 +52,8 @@ def init_db():
                 book_id int,
                 foreign key (book_id) references Book(id),
                 user_id int,
-                foreign key (user_id) references BookfinderUser(id)
+                foreign key (user_id) references BookfinderUser(id),
+                time_added timestamp
             );
         '''
     )
@@ -98,11 +99,11 @@ def flush_db():
         )
 
 
-def execute_sql_query(query):
+def execute_sql_query(query, params=None):
     results = []
     with closing(connect_db()) as db:
         cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cursor.execute(query)
+        cursor.execute(query, params)
         try:
             results = cursor.fetchall()
         except psycopg2.ProgrammingError:
