@@ -77,7 +77,7 @@
                         $("#book-isbn").text("Book ISBN-13: " + book.isbn);
                         $("#book-author").text("Book authors: " + authors.join(", "));
                         $("#book-information").show();
-                        get_option_list(e.target.value);
+                        get_option_list(book.isbn);
                         $("#book-comparison-listing").show();
                     });
                 }

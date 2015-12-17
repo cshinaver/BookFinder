@@ -24,6 +24,7 @@ from scraper import (
 @app.route('/api/book_for_isbn/')
 def book_for_isbn():
     isbn = request.args.get('isbn')
+    isbn = to_isbn13(isbn)
     amazon_books = AmazonScraper().get_amazon_books_for_keyword(isbn)
     # Convert all values to strings
     book_list = [
