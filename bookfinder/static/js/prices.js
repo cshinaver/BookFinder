@@ -109,8 +109,7 @@ function add_option_to_list(option, list_id) {
     var new_price = document.createElement("td");
     var new_price_link = document.createElement("a");
     var new_price_div = document.createElement("div");
-    var precisionNeeded = Math.log(option.price)/Math.log(10)+3;
-    var price_str = '$'+(Number(option.price).toPrecision(precisionNeeded));
+    var price_str = '$'+(Number(option.price).toFixed(2));
     var new_price_text = document.createTextNode(price_str);
     new_price_div.setAttribute("align","right");
     new_price_div.appendChild(new_price_text);
