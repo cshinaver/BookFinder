@@ -1,4 +1,7 @@
 function add_item_to_list(book, list_id) {
+    if (book === undefined) {
+        return;
+    }
     var new_entry = document.createElement("a");
     //thumbnail:
     var new_thumb_frame = document.createElement("div");

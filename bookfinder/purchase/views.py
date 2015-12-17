@@ -1,5 +1,6 @@
 from flask import render_template, request, flash, redirect, url_for
 from flask.views import View
+from isbnlib import to_isbn13
 from bookfinder import app
 from bookfinder.api.scraper import get_books_for_book_title_using_google_books
 from bookfinder.purchase.form import SellBookForm
@@ -51,6 +52,7 @@ class SellBook(View):
         isbn = isbn.encode('utf8')
         # Strip '-'
         isbn = isbn.replace('-', '')
+        isbn = to_isbn13(isbn)
 
         try:
             price = "{:.2f}".format(float(price))
