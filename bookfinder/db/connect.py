@@ -50,9 +50,10 @@ def init_db():
             create table BooksViewed(
                 id serial primary key,
                 book_id int,
-                foreign key (book_id) references Book(id),
+                foreign key (book_id) references Book(id) on delete cascade,
                 user_id int,
-                foreign key (user_id) references BookfinderUser(id),
+                foreign key (user_id) references BookfinderUser(id)
+                on delete cascade,
                 time_added timestamp
             );
         '''
