@@ -15,5 +15,30 @@
         </fieldset>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
+    <div id="book-information" style="display:none">
+        <h3 id="book-title">Book Title: </h3>
+        <h3 id="book-author">Book Authors</h3>
+        <h3 id="book-isbn">Book ISBN</h3>
+    </div>
 </div>
+{% endblock %}
+{% block footer %}
+    {{ super() }}
+    <script src="/static/js/purchase.js"></script>
+    <script>
+        $(function() {
+            $("#ISBN").on('input', function(e) {
+                if (e.target.value.length >= 10) {
+                    $.get("/api/book_for_isbn", { isbn: e.target.value}, function(data) {
+                        book = JSON.parse(data);
+                        authors = book.author;
+                        $("#book-title").text("Book title: " + book.title);
+                        $("#book-isbn").text("Book ISBN-13: " + book.isbn);
+                        $("#book-author").text("Book authors: " + authors.join(", "));
+                        $("#book-information").show();
+                    });
+                }
+            });
+        });
+    </script>
 {% endblock %}
