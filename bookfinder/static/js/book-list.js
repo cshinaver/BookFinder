@@ -21,7 +21,15 @@ function add_item_to_list(book, list_id) {
     new_isbn.appendChild(new_isbn_text);
     new_isbn.setAttribute("class","list-group-item-text");
     new_info_frame.appendChild(new_isbn);
+    //Author:
+    var authors=book.authors.replace("\', u\'", ", ");  //format string if multiple authors
+    var new_author = document.createElement("p");
+    var new_author_text = document.createTextNode("Author: "+authors.slice(3,authors.length-2));//cut off ugly format of author string
+    new_author.appendChild(new_author_text);
+    new_author.setAttribute("class","list-group-item-text");
+    new_info_frame.appendChild(new_author);
     new_entry.appendChild(new_info_frame);
+
     new_entry.setAttribute("style","overflow:auto;");
     new_entry.setAttribute("class","list-group-item");
     new_entry.setAttribute("href",'/search/prices?isbn=' + book.isbn);
