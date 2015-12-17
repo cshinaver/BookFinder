@@ -104,29 +104,24 @@ class BaseModel:
             class_name = self.__class__.__name__
             properties = self.get_properties()
             properties = [p for p in properties if p != 'id']
-            values = []
-            for prop in properties:
-                value = getattr(self, prop)
-                if isinstance(value, basestring):
-                    values.append("'{value}'".format(value=value))
-                elif value is None:
-                    values.append('NULL')
-                else:
-                    values.append('{value}'.format(value=value))
+            values = [getattr(self, prop) for prop in properties]
+            column_field_names = ', '.join([p for p in properties])
+            value_field_placeholders = ', '.join(['%s' for v in values])
             query = (
                 '''
                     insert into {table_name}
-                    ({properties})
+                    ({column_field_names})
                     values
-                    ({values})
+                    ({value_field_placeholders})
                     returning id
                 '''.format(
                     table_name=class_name,
-                    properties=','.join(properties),
-                    values=','.join(values),
+                    column_field_names=column_field_names,
+                    value_field_placeholders=value_field_placeholders,
                 )
             )
-            id = execute_sql_query(query)[0][0]
+            params = values
+            id = execute_sql_query(query, params)[0][0]
             self.id = id
 
         def _save_as_existing_object():
@@ -134,20 +129,16 @@ class BaseModel:
             properties = self.get_properties()
             properties = [p for p in properties if p != 'id']
             kv_pairs = []
+            values = []
             for prop in properties:
                 value = getattr(self, prop)
-                if isinstance(value, basestring):
-                    value = "'{value}'".format(value=value)
-                elif not value:
-                    value = 'NULL'
-                else:
-                    value = "{value}".format(value=value)
                 kv_pairs.append(
-                    '{key} = {value}'.format(
+                    '{key} = %s'.format(
                         key=prop,
                         value=value,
                     )
                 )
+                values.append(value)
 
             query = (
                 '''
@@ -160,7 +151,7 @@ class BaseModel:
                     id=self.id,
                 )
             )
-            execute_sql_query(query)
+            execute_sql_query(query, params=values)
 
         if hasattr(self, 'id'):
             if self.id:

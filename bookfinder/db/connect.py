@@ -98,11 +98,11 @@ def flush_db():
         )
 
 
-def execute_sql_query(query):
+def execute_sql_query(query, params=None):
     results = []
     with closing(connect_db()) as db:
         cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cursor.execute(query)
+        cursor.execute(query, params)
         try:
             results = cursor.fetchall()
         except psycopg2.ProgrammingError:
