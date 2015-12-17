@@ -105,6 +105,8 @@ class SellBook(View):
             errors.append('No ISBN entered')
         if price == '':
             errors.append('No price entered')
+        if len(price) > 10:
+            errors.append('Price must not exceed 10 characters')
         len_isbn = len(isbn)
         if len_isbn != 10 and len_isbn != 13:
             errors.append(
